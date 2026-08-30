@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { api } from '../api'
+import { store } from '../store'
+import { IconPlus } from '../icons'
 
 export default function AddItem() {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ export default function AddItem() {
     setSaving(true)
     setError('')
     try {
-      const item = await api.create({
+      const item = await store.create({
         title,
         sourceType,
         sourceUrl: sourceType === 'url' ? sourceUrl : '',
@@ -38,7 +39,7 @@ export default function AddItem() {
 
   return (
     <div>
-      <h2>새 지식 등록</h2>
+      <h1 className="page-title">새 지식 등록</h1>
       <form className="card" onSubmit={handleSubmit}>
         <div className="field">
           <label>제목</label>
@@ -47,6 +48,7 @@ export default function AddItem() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="예: 좋은 습관 형성에 관한 아티클"
+            autoFocus
           />
         </div>
 
@@ -77,7 +79,7 @@ export default function AddItem() {
             onChange={(e) => setRawContent(e.target.value)}
             placeholder="유튜브 자막, 기사 본문, 레포트 내용, 떠오른 생각 등을 붙여넣으세요."
           />
-          <div className="hint">
+          <div className="hint" style={{ marginTop: 8, marginBottom: 0 }}>
             URL만 있고 본문이 없어도 괜찮아요. 다음 단계에서 AI 프롬프트를 만들 때 URL을 함께 전달합니다.
           </div>
         </div>
@@ -92,9 +94,10 @@ export default function AddItem() {
           />
         </div>
 
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
+        {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem' }}>{error}</p>}
 
         <button type="submit" disabled={saving}>
+          <IconPlus width={16} height={16} />
           {saving ? '저장 중...' : '저장하고 계속하기'}
         </button>
       </form>

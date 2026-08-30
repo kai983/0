@@ -1,21 +1,13 @@
-import { NavLink, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
+import Sidebar from './Sidebar.jsx'
 import ArchiveList from './pages/ArchiveList.jsx'
 import AddItem from './pages/AddItem.jsx'
 import ItemDetail from './pages/ItemDetail.jsx'
 
 export default function App() {
   return (
-    <div className="app">
-      <header className="topbar">
-        <div className="brand">📚 나의 지식 아카이브</div>
-        <nav>
-          <NavLink to="/" end>
-            아카이브
-          </NavLink>
-          <NavLink to="/add">+ 새 지식</NavLink>
-        </nav>
-      </header>
-
+    <div className="app-shell">
+      <Sidebar />
       <main className="content">
         <Routes>
           <Route path="/" element={<ArchiveList />} />
