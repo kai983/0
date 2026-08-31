@@ -1,14 +1,21 @@
+import { useState } from 'react'
 import { THEMES } from '../theme'
+import { aiKey } from '../ai'
 import { IconCheck } from '../icons'
 
-/** Bottom sheet for picking one of the four visual themes. */
+/** Bottom sheet with the theme picker and the AI settings. */
 export default function ThemeSheet({ current, onPick, onClose }) {
+  const [key, setKey] = useState(aiKey.get())
+  const [savedTick, setSavedTick] = useState(false)
+
+  function saveKey() {
+    aiKey.set(key)
+    setSavedTick(true)
+    setTimeout(() => setSavedTick(false), 1500)
+  }
+
   return (
-    <div
-      className="sheet-backdrop"
-      onClick={onClose}
-      role="presentation"
-    >
+    <div className="sheet-backdrop" onClick={onClose} role="presentation">
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <h2 className="sheet-title">테마</h2>
         <p className="sheet-sub">같은 내용을 다른 밀도와 색으로 봅니다.</p>
@@ -35,6 +42,28 @@ export default function ThemeSheet({ current, onPick, onClose }) {
             )}
           </button>
         ))}
+
+        <h2 className="sheet-title" style={{ marginTop: 24 }}>
+          자동 AI 요약
+        </h2>
+        <p className="sheet-sub">
+          Gemini 무료 API 키를 넣으면 공유하자마자 요약까지 자동으로 됩니다. 키는 이 폰에만
+          저장돼요. aistudio.google.com/apikey 에서 1분이면 무료로 만들 수 있어요.
+        </p>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input
+            type="text"
+            value={key}
+            onChange={(e) => setKey(e.target.value)}
+            placeholder="AIza... 로 시작하는 키"
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck="false"
+          />
+          <button className="secondary" onClick={saveKey}>
+            {savedTick ? <IconCheck width={16} height={16} /> : '저장'}
+          </button>
+        </div>
 
         <p className="sheet-version">버전 {__APP_VERSION__}</p>
       </div>

@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { store } from '../store'
 import { cards as cardStore, parseCards } from '../cards'
 import { buildCardsPrompt } from '../promptTemplate'
 import { canShare, pendingAi, sendToAi } from '../sharing'
+import { hasAiKey, makeCardsForItem, summarizeItem } from '../ai'
 import AppBar from '../components/AppBar.jsx'
 import Markdown from '../components/Markdown.jsx'
 import {
@@ -33,6 +34,11 @@ export default function ItemDetail() {
   const [cardsPasted, setCardsPasted] = useState('')
   const [cardsCopied, setCardsCopied] = useState(false)
   const [savingCards, setSavingCards] = useState(false)
+  const [aiBusy, setAiBusy] = useState(false)
+  const [aiError, setAiError] = useState('')
+  const [cardsBusy, setCardsBusy] = useState(false)
+  const [cardsError, setCardsError] = useState('')
+  const location = useLocation()
 
   useEffect(() => {
     setLoading(true)
@@ -46,6 +52,48 @@ export default function ItemDetail() {
       .finally(() => setLoading(false))
     cardStore.forItem(id).then((list) => setCardCount(list.length))
   }, [id])
+
+  // A share-captured card lands here with autoAi set; summarize it right away.
+  const autoRan = useRef(false)
+  useEffect(() => {
+    if (item && location.state?.autoAi && !item.summary && hasAiKey() && !autoRan.current) {
+      autoRan.current = true
+      runAutoSummary(item)
+    }
+  }, [item?.id, location.state?.autoAi])
+
+  async function runAutoSummary(current) {
+    setAiBusy(true)
+    setAiError('')
+    try {
+      const summary = await summarizeItem(current)
+      const merged = [...current.tags, ...extractTagsFromSummary(summary)]
+      const updated = await store.update(current.id, { summary, tags: merged })
+      setItem(updated)
+      setTagsInput(updated.tags.join(', '))
+    } catch (err) {
+      setAiError(err.message)
+    } finally {
+      setAiBusy(false)
+    }
+  }
+
+  async function runAutoCards() {
+    setCardsBusy(true)
+    setCardsError('')
+    try {
+      const answer = await makeCardsForItem(item)
+      const pairs = parseCards(answer)
+      if (!pairs.length) throw new Error('문답을 읽어내지 못했어요. 다시 시도해 주세요.')
+      await cardStore.addMany(id, pairs)
+      const list = await cardStore.forItem(id)
+      setCardCount(list.length)
+    } catch (err) {
+      setCardsError(err.message)
+    } finally {
+      setCardsBusy(false)
+    }
+  }
 
   function handleGenerateCards() {
     setCardPrompt(
@@ -257,13 +305,30 @@ export default function ItemDetail() {
             </div>
           )}
 
-          {!prompt && (
+          {aiBusy && (
+            <div className="ai-callout">
+              <IconSparkle width={16} height={16} />
+              <p>AI가 요약을 만드는 중이에요...</p>
+            </div>
+          )}
+          {aiError && !aiBusy && (
+            <p className="hint" style={{ color: 'var(--danger)', marginBottom: 12 }}>{aiError}</p>
+          )}
+
+          {!prompt && !aiBusy && hasAiKey() && (
+            <button className="block" onClick={() => runAutoSummary(item)}>
+              <IconSparkle width={16} height={16} />
+              {item.summary ? 'AI 요약 다시 생성' : aiError ? '다시 시도' : 'AI 요약 자동 생성'}
+            </button>
+          )}
+          {!prompt && !aiBusy && (
             <button
-              className={`block ${item.summary ? 'secondary' : ''}`}
+              className={`block ${hasAiKey() ? 'quiet' : ''}`}
+              style={hasAiKey() ? { marginTop: 8 } : undefined}
               onClick={handleGeneratePrompt}
             >
               <IconSparkle width={16} height={16} />
-              {item.summary ? '다시 재가공하기' : 'AI 프롬프트 생성'}
+              {hasAiKey() ? '수동으로 (프롬프트 보내기)' : item.summary ? '다시 재가공하기' : 'AI 프롬프트 생성'}
             </button>
           )}
 
@@ -340,10 +405,22 @@ export default function ItemDetail() {
             </p>
           )}
 
-          {!cardPrompt ? (
+          {cardsBusy && (
+            <p className="hint" style={{ marginBottom: 12 }}>AI가 문답 카드를 만드는 중이에요...</p>
+          )}
+          {cardsError && !cardsBusy && (
+            <p className="hint" style={{ color: 'var(--danger)', marginBottom: 12 }}>{cardsError}</p>
+          )}
+          {!cardPrompt && !cardsBusy && hasAiKey() && (
+            <button className="block" style={{ marginBottom: 8 }} onClick={runAutoCards}>
+              <IconCards width={16} height={16} />
+              {cardCount > 0 ? '카드 자동으로 더 만들기' : '학습 카드 자동 생성'}
+            </button>
+          )}
+          {!cardPrompt && cardsBusy ? null : !cardPrompt ? (
             <button className="block quiet" onClick={handleGenerateCards}>
               <IconCards width={16} height={16} />
-              {cardCount > 0 ? '카드 더 만들기' : '학습 카드 만들기'}
+              {hasAiKey() ? '수동으로 만들기' : cardCount > 0 ? '카드 더 만들기' : '학습 카드 만들기'}
             </button>
           ) : (
             <>

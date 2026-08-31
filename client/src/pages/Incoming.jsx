@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { store } from '../store'
 import { cards as cardStore, parseCards } from '../cards'
 import { looksLikeAiAnswer, parseShared, pendingAi } from '../sharing'
+import { hasAiKey } from '../ai'
 import AppBar from '../components/AppBar.jsx'
 import { IconCards, IconNote, IconSparkle } from '../icons'
 
@@ -26,6 +27,19 @@ export default function Incoming({ shared, onDone }) {
     store.get(pending.itemId).then(setTarget).catch(() => setTarget(null))
   }, [pending?.itemId])
 
+  // With an AI key set, captured content skips this screen entirely: the card
+  // is created on the spot and the detail page picks up the summary work.
+  const autoCapture = hasAiKey() && !isAnswer && !pending
+  const captured = useRef(false)
+  useEffect(() => {
+    // The guard keeps a re-render (or StrictMode's double effect) from
+    // saving the same share twice.
+    if (autoCapture && !captured.current) {
+      captured.current = true
+      saveAsNew(true)
+    }
+  }, [autoCapture])
+
   const canAttach = Boolean(target) && isAnswer
 
   async function saveAsAnswer() {
@@ -45,7 +59,7 @@ export default function Incoming({ shared, onDone }) {
     }
   }
 
-  async function saveAsNew() {
+  async function saveAsNew(autoAi = false) {
     setSaving(true)
     try {
       const item = await store.create({
@@ -56,10 +70,21 @@ export default function Incoming({ shared, onDone }) {
         tags: [],
       })
       onDone()
-      navigate(`/items/${item.id}`, { replace: true })
+      navigate(`/items/${item.id}`, { replace: true, state: autoAi ? { autoAi: true } : undefined })
     } finally {
       setSaving(false)
     }
+  }
+
+  if (autoCapture) {
+    return (
+      <>
+        <AppBar title="저장 중" />
+        <div className="page">
+          <p className="hint">저장하고 AI 요약을 시작할게요...</p>
+        </div>
+      </>
+    )
   }
 
   return (
