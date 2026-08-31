@@ -3,9 +3,19 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { store } from '../store'
 import { cards as cardStore, parseCards } from '../cards'
 import { buildCardsPrompt } from '../promptTemplate'
+import { canShare, pendingAi, sendToAi } from '../sharing'
 import AppBar from '../components/AppBar.jsx'
 import Markdown from '../components/Markdown.jsx'
-import { IconCards, IconCheck, IconCopy, IconLink, IconNote, IconSparkle, IconTrash } from '../icons'
+import {
+  IconCards,
+  IconCheck,
+  IconCopy,
+  IconLink,
+  IconNote,
+  IconSend,
+  IconSparkle,
+  IconTrash,
+} from '../icons'
 
 export default function ItemDetail() {
   const { id } = useParams()
@@ -265,7 +275,19 @@ export default function ItemDetail() {
                   프롬프트를 복사해 Claude.ai에 붙여넣기
                 </div>
                 <div className="prompt-box">{prompt}</div>
-                <button className="block secondary" style={{ marginTop: 10 }} onClick={handleCopy}>
+                {canShare() && (
+                  <button
+                    className="block"
+                    style={{ marginTop: 10 }}
+                    onClick={() => {
+                      pendingAi.set(id, 'summary')
+                      sendToAi(prompt, item.title)
+                    }}
+                  >
+                    <IconSend width={16} height={16} />AI 앱으로 보내기
+                  </button>
+                )}
+                <button className="block quiet" style={{ marginTop: 8 }} onClick={handleCopy}>
                   {copied ? <IconCheck width={16} height={16} /> : <IconCopy width={16} height={16} />}
                   {copied ? '복사됨' : '프롬프트 복사'}
                 </button>
@@ -274,7 +296,7 @@ export default function ItemDetail() {
               <div className="step">
                 <div className="step-label">
                   <span className="step-num">2</span>
-                  Claude의 답변을 붙여넣기
+                  답변을 붙여넣기 (공유로 받으면 생략)
                 </div>
                 <textarea
                   value={pasted}
@@ -331,9 +353,21 @@ export default function ItemDetail() {
                   프롬프트를 복사해 Claude.ai에 붙여넣기
                 </div>
                 <div className="prompt-box">{cardPrompt}</div>
+                {canShare() && (
+                  <button
+                    className="block"
+                    style={{ marginTop: 10 }}
+                    onClick={() => {
+                      pendingAi.set(id, 'cards')
+                      sendToAi(cardPrompt, item.title)
+                    }}
+                  >
+                    <IconSend width={16} height={16} />AI 앱으로 보내기
+                  </button>
+                )}
                 <button
-                  className="block secondary"
-                  style={{ marginTop: 10 }}
+                  className="block quiet"
+                  style={{ marginTop: 8 }}
                   onClick={handleCopyCards}
                 >
                   {cardsCopied ? <IconCheck width={16} height={16} /> : <IconCopy width={16} height={16} />}
@@ -344,7 +378,7 @@ export default function ItemDetail() {
               <div className="step">
                 <div className="step-label">
                   <span className="step-num">2</span>
-                  Claude의 답변을 붙여넣기
+                  답변을 붙여넣기 (공유로 받으면 생략)
                 </div>
                 <textarea
                   value={cardsPasted}
