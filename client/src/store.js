@@ -25,6 +25,22 @@ function normalizeTags(tags) {
   return [];
 }
 
+/**
+ * One line to show under a title in the list: the AI summary's headline if the
+ * item has been reprocessed, otherwise the start of the original note.
+ */
+export function excerptOf(item) {
+  const summary = (item.summary || '').trim();
+  if (summary) {
+    const lines = summary
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l && !l.startsWith('#'));
+    if (lines.length) return lines[0].replace(/^[-*•]\s*/, '');
+  }
+  return (item.raw_content || '').trim().split('\n').filter(Boolean)[0] || '';
+}
+
 export const store = {
   list({ q, tag } = {}) {
     let items = readAll().sort((a, b) => b.updated_at.localeCompare(a.updated_at));

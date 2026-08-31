@@ -98,6 +98,18 @@ export function IconTrash(props) {
   )
 }
 
+export function IconPalette(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 3a9 9 0 1 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01a1.5 1.5 0 0 1 1.11-2.49H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8Z" />
+      <circle cx="7.5" cy="12" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="9.5" cy="8" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="14.5" cy="8" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="17" cy="11.5" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
 export function IconSparkle(props) {
   return (
     <svg {...base} {...props}>
