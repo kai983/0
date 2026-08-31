@@ -54,8 +54,8 @@ export default function AddItem() {
         <div className="field">
           <label>출처 유형</label>
           <select value={sourceType} onChange={(e) => setSourceType(e.target.value)}>
-            <option value="text">텍스트 (메모 · 붙여넣기)</option>
-            <option value="url">URL (유튜브 · 기사 · 레포트)</option>
+            <option value="text">텍스트 (메모 - 붙여넣기)</option>
+            <option value="url">URL (유튜브 - 기사 - 레포트)</option>
           </select>
         </div>
 
@@ -73,7 +73,7 @@ export default function AddItem() {
         )}
 
         <div className="field">
-          <label>원문 · 메모</label>
+          <label>원문 - 메모</label>
           <textarea
             value={rawContent}
             onChange={(e) => setRawContent(e.target.value)}

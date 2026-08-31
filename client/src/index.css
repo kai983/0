@@ -7,7 +7,7 @@
 }
 
 /* =========================================================
-   Themes — every screen reads these tokens, so switching the
+   Themes - every screen reads these tokens, so switching the
    data-theme attribute on <html> restyles the whole app.
    ========================================================= */
 
@@ -63,7 +63,7 @@
   --tag-pad: 0;
   --tag-radius: 0;
   --tag-size: 11.5px;
-  --tag-sep: '·';
+  --tag-sep: '-';
 
   --card-bg: #ffffff;
   --card-border: 1px solid var(--border);
@@ -121,7 +121,7 @@
   --tag-pad: 0;
   --tag-radius: 0;
   --tag-size: 10.5px;
-  --tag-sep: '·';
+  --tag-sep: '-';
 
   --card-bg: #ffffff;
   --card-border: 1px solid var(--border);
@@ -179,7 +179,7 @@
   --tag-pad: 0;
   --tag-radius: 0;
   --tag-size: 11px;
-  --tag-sep: '·';
+  --tag-sep: '-';
 
   --card-bg: #1c1a15;
   --card-border: 1px solid var(--border);
@@ -944,16 +944,22 @@ button:disabled {
 
 .markdown-list {
   margin: 0 0 12px;
-  padding-left: 18px;
+  padding-left: 0;
+  list-style: none;
 }
 
 .markdown-list li {
+  position: relative;
   margin-bottom: 6px;
+  padding-left: 14px;
   line-height: 1.7;
   font-size: 14.5px;
 }
 
-.markdown-list li::marker {
+.markdown-list li::before {
+  content: '-';
+  position: absolute;
+  left: 0;
   color: var(--accent);
 }
 

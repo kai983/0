@@ -176,7 +176,7 @@ export default function ItemDetail() {
         </div>
 
         <div className="section">
-          <div className="section-label">원문 · 메모</div>
+          <div className="section-label">원문 - 메모</div>
           <div className={`raw-content-view ${item.raw_content ? '' : 'empty'}`}>
             {item.raw_content || '원문 없음'}
           </div>
@@ -199,7 +199,7 @@ export default function ItemDetail() {
               <IconSparkle width={16} height={16} />
               <p>
                 프롬프트를 생성해 Claude.ai(구독 중인 요금제)에 붙여넣고, 답변을 받아 다시 여기에
-                붙여넣으면 요약·핵심·태그가 정리되어 저장됩니다. 추가 API 비용은 없습니다.
+                붙여넣으면 요약-핵심-태그가 정리되어 저장됩니다. 추가 API 비용은 없습니다.
               </p>
             </div>
           )}

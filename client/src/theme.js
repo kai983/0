@@ -6,28 +6,28 @@ export const THEMES = [
   {
     id: 'editorial',
     name: '편집형',
-    tagline: '읽기 우선 · 넉넉한 여백',
+    tagline: '읽기 우선 - 넉넉한 여백',
     dark: false,
     swatch: { bg: '#fbfaf7', ink: '#171614', accent: '#2f5d50' },
   },
   {
     id: 'index',
     name: '인덱스형',
-    tagline: '찾기 우선 · 한 화면에 많이',
+    tagline: '찾기 우선 - 한 화면에 많이',
     dark: false,
     swatch: { bg: '#ffffff', ink: '#111111', accent: '#111111' },
   },
   {
     id: 'immersive',
     name: '몰입형',
-    tagline: '다크 · 밤에 보기 편하게',
+    tagline: '다크 - 밤에 보기 편하게',
     dark: true,
     swatch: { bg: '#14130f', ink: '#f2efe6', accent: '#e8a33d' },
   },
   {
     id: 'toss',
     name: '토스풍',
-    tagline: '국내 앱 문법 · 또렷한 대비',
+    tagline: '국내 앱 문법 - 또렷한 대비',
     dark: false,
     swatch: { bg: '#ffffff', ink: '#191f28', accent: '#3182f6' },
   },
@@ -59,7 +59,7 @@ export function applyTheme(id) {
     const SystemBars = registerPlugin('SystemBars')
     SystemBars.setStyle({ style: theme.dark ? 'DARK' : 'LIGHT' })
   } catch {
-    // Not running inside Capacitor — nothing to do.
+    // Not running inside Capacitor - nothing to do.
   }
 
   try {
