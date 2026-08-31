@@ -39,6 +39,9 @@ jobs:
 
       - name: Build web app
         working-directory: client
+        env:
+          # Repository secret; baked into the bundle as the default AI key.
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: npm run build
 
       - name: Sync Capacitor Android project

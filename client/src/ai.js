@@ -2,13 +2,22 @@ import { Capacitor, CapacitorHttp } from '@capacitor/core'
 import { buildCardsPrompt, buildSummaryPrompt } from './promptTemplate'
 
 const KEY_STORAGE = 'knowledge-archive:gemini-key:v1'
-const MODEL = 'gemini-2.5-flash'
+// gemini-2.5-flash is closed to new accounts; 3.6-flash is the current free model.
+const MODEL = 'gemini-3.6-flash'
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
+
+// Baked in at build time from the GEMINI_KEY secret (empty in dev builds),
+// so the app works out of the box. A key entered in settings overrides it.
+const DEFAULT_KEY = __DEFAULT_AI_KEY__
 
 const YOUTUBE = /^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch|shorts)|youtu\.be\/)/
 
 export const aiKey = {
   get() {
+    return this.stored() || DEFAULT_KEY
+  },
+  /** Only what the user typed themselves; empty when running on the built-in key. */
+  stored() {
     try {
       return localStorage.getItem(KEY_STORAGE) || ''
     } catch {
@@ -58,6 +67,7 @@ async function generate(parts, tools) {
   }
 
   if (status === 429) throw new Error('무료 한도에 걸렸어요. 1분쯤 뒤에 다시 시도해 주세요.')
+  if (status === 503) throw new Error('지금 이용자가 몰려 있어요. 잠시 뒤에 다시 시도해 주세요.')
   if (status === 400 || status === 401 || status === 403) {
     throw new Error('API 키가 올바르지 않아요. 설정에서 다시 확인해 주세요.')
   }
@@ -66,6 +76,7 @@ async function generate(parts, tools) {
   }
 
   const text = (data?.candidates?.[0]?.content?.parts || [])
+    .filter((p) => !p.thought)
     .map((p) => p.text || '')
     .join('')
     .trim()
