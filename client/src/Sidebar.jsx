@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useSearchParams } from 'react-router-dom'
 import { store } from './store'
 import { IconArchive, IconPlus, IconTag } from './icons'
 
+/** Desktop-only navigation. On mobile, BottomNav + AppBar take over. */
 export default function Sidebar() {
   const location = useLocation()
   const [searchParams] = useSearchParams()

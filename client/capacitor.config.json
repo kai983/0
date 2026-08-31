@@ -1,5 +1,11 @@
 {
   "appId": "kr.fanding.knowledgearchive",
   "appName": "지식 아카이브",
-  "webDir": "dist"
+  "webDir": "dist",
+  "backgroundColor": "#fbfaf8",
+  "plugins": {
+    "SystemBars": {
+      "style": "LIGHT"
+    }
+  }
 }

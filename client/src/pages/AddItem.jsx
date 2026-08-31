@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { store } from '../store'
-import { IconPlus } from '../icons'
+import AppBar from '../components/AppBar.jsx'
 
 export default function AddItem() {
   const navigate = useNavigate()
@@ -14,7 +14,7 @@ export default function AddItem() {
   const [error, setError] = useState('')
 
   async function handleSubmit(e) {
-    e.preventDefault()
+    e?.preventDefault()
     if (!title.trim()) {
       setError('제목을 입력해주세요.')
       return
@@ -29,7 +29,7 @@ export default function AddItem() {
         rawContent,
         tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
       })
-      navigate(`/items/${item.id}`)
+      navigate(`/items/${item.id}`, { replace: true })
     } catch (err) {
       setError(err.message)
     } finally {
@@ -38,9 +38,9 @@ export default function AddItem() {
   }
 
   return (
-    <div>
-      <h1 className="page-title">새 지식 등록</h1>
-      <form className="card" onSubmit={handleSubmit}>
+    <>
+      <AppBar title="새 지식" back />
+      <form className="page" onSubmit={handleSubmit}>
         <div className="field">
           <label>제목</label>
           <input
@@ -48,15 +48,14 @@ export default function AddItem() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="예: 좋은 습관 형성에 관한 아티클"
-            autoFocus
           />
         </div>
 
         <div className="field">
           <label>출처 유형</label>
           <select value={sourceType} onChange={(e) => setSourceType(e.target.value)}>
-            <option value="text">텍스트 (직접 메모/붙여넣기)</option>
-            <option value="url">URL (유튜브/기사/레포트 링크)</option>
+            <option value="text">텍스트 (메모 · 붙여넣기)</option>
+            <option value="url">URL (유튜브 · 기사 · 레포트)</option>
           </select>
         </div>
 
@@ -65,6 +64,7 @@ export default function AddItem() {
             <label>출처 URL</label>
             <input
               type="url"
+              inputMode="url"
               value={sourceUrl}
               onChange={(e) => setSourceUrl(e.target.value)}
               placeholder="https://..."
@@ -73,15 +73,15 @@ export default function AddItem() {
         )}
 
         <div className="field">
-          <label>원문 / 메모</label>
+          <label>원문 · 메모</label>
           <textarea
             value={rawContent}
             onChange={(e) => setRawContent(e.target.value)}
-            placeholder="유튜브 자막, 기사 본문, 레포트 내용, 떠오른 생각 등을 붙여넣으세요."
+            placeholder="유튜브 자막, 기사 본문, 레포트 내용, 떠오른 생각을 붙여넣으세요."
           />
-          <div className="hint" style={{ marginTop: 8, marginBottom: 0 }}>
-            URL만 있고 본문이 없어도 괜찮아요. 다음 단계에서 AI 프롬프트를 만들 때 URL을 함께 전달합니다.
-          </div>
+          <p className="hint" style={{ marginTop: 8 }}>
+            URL만 있고 본문이 없어도 괜찮아요. AI 프롬프트를 만들 때 URL을 함께 전달합니다.
+          </p>
         </div>
 
         <div className="field">
@@ -94,13 +94,14 @@ export default function AddItem() {
           />
         </div>
 
-        {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem' }}>{error}</p>}
+        {error && (
+          <p style={{ color: 'var(--danger)', fontSize: '0.87rem', marginTop: -6 }}>{error}</p>
+        )}
 
-        <button type="submit" disabled={saving}>
-          <IconPlus width={16} height={16} />
+        <button type="submit" className="block" disabled={saving}>
           {saving ? '저장 중...' : '저장하고 계속하기'}
         </button>
       </form>
-    </div>
+    </>
   )
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches the web UI's --bg and --accent so the native window and the
+         WebView never disagree (e.g. during launch or over-scroll). -->
+    <color name="appBackground">#FBFAF8</color>
+    <color name="colorPrimary">#D9730D</color>
+    <color name="colorPrimaryDark">#B35F0A</color>
+    <color name="colorAccent">#D9730D</color>
+</resources>
