@@ -1063,3 +1063,11 @@ button:disabled {
   color: var(--accent);
   flex-shrink: 0;
 }
+
+.sheet-version {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-faint);
+}

@@ -53,21 +53,32 @@ jobs:
         working-directory: client/android
         run: ./gradlew assembleDebug --stacktrace
 
+      - name: Read app version
+        id: version
+        run: echo "value=$(node -p "require('./client/package.json').version")" >> "$GITHUB_OUTPUT"
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: knowledge-archive-debug-apk
+          name: knowledge-archive-${{ steps.version.outputs.value }}-apk
           path: client/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
       - name: Publish APK as a GitHub Release asset
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.value }}
         run: |
-          tag="apk-build-${{ github.run_number }}"
-          cp client/android/app/build/outputs/apk/debug/app-debug.apk knowledge-archive-debug.apk
-          gh release create "$tag" knowledge-archive-debug.apk \
-            --repo "${{ github.repository }}" \
-            --title "지식 아카이브 debug APK (build ${{ github.run_number }})" \
-            --notes "자동 빌드된 디버그 APK입니다. 커밋: ${{ github.sha }}" \
-            --prerelease
+          # One release per version. Re-running the same version replaces its asset
+          # instead of failing on an existing tag.
+          cp client/android/app/build/outputs/apk/debug/app-debug.apk "knowledge-archive-$VERSION.apk"
+          if gh release view "v$VERSION" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release upload "v$VERSION" "knowledge-archive-$VERSION.apk" \
+              --repo "${{ github.repository }}" --clobber
+          else
+            gh release create "v$VERSION" "knowledge-archive-$VERSION.apk" \
+              --repo "${{ github.repository }}" \
+              --title "지식 아카이브 v$VERSION" \
+              --notes "커밋: ${{ github.sha }}" \
+              --prerelease
+          fi

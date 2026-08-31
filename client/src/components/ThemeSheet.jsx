@@ -35,6 +35,8 @@ export default function ThemeSheet({ current, onPick, onClose }) {
             )}
           </button>
         ))}
+
+        <p className="sheet-version">버전 {__APP_VERSION__}</p>
       </div>
     </div>
   )
