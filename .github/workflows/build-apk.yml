@@ -9,6 +9,9 @@ on:
       - '.github/workflows/build-apk.yml'
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -56,3 +59,15 @@ jobs:
           name: knowledge-archive-debug-apk
           path: client/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Publish APK as a GitHub Release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="apk-build-${{ github.run_number }}"
+          cp client/android/app/build/outputs/apk/debug/app-debug.apk knowledge-archive-debug.apk
+          gh release create "$tag" knowledge-archive-debug.apk \
+            --repo "${{ github.repository }}" \
+            --title "지식 아카이브 debug APK (build ${{ github.run_number }})" \
+            --notes "자동 빌드된 디버그 APK입니다. 커밋: ${{ github.sha }}" \
+            --prerelease
