@@ -48,14 +48,22 @@ export default function ThemeSheet({ current, onPick, onClose }) {
         </h2>
         <p className="sheet-sub">
           Gemini 무료 API 키를 넣으면 공유하자마자 요약까지 자동으로 됩니다. 키는 이 폰에만
-          저장돼요. aistudio.google.com/apikey 에서 1분이면 무료로 만들 수 있어요.
+          저장돼요. 하루 250회 무료, 카드 등록 없음.
         </p>
+        <a
+          href="https://aistudio.google.com/apikey"
+          target="_blank"
+          rel="noreferrer"
+          style={{ display: 'block', marginBottom: 10 }}
+        >
+          <button className="block quiet">1. 무료 키 만들기 (구글 로그인만 하면 끝)</button>
+        </a>
         <div style={{ display: 'flex', gap: 8 }}>
           <input
             type="text"
             value={key}
             onChange={(e) => setKey(e.target.value)}
-            placeholder="AIza... 로 시작하는 키"
+            placeholder="2. 만든 키를 여기 붙여넣기"
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck="false"
