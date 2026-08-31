@@ -28,3 +28,28 @@ ${content || '(원문 없음 - URL만 참고)'}
 쉼표로 구분된 3~6개의 짧은 태그 (예: 생산성, 마케팅, AI)
 `;
 }
+
+/** Asks for question and answer pairs in the shape parseCards() reads back. */
+export function buildCardsPrompt({ title, summary, rawContent }) {
+  const source = (summary || '').trim() || (rawContent || '').trim();
+
+  return `다음 내용으로 복습용 문답 카드를 만들어줘.
+
+제목: ${title}
+
+[내용]
+${source || '(내용 없음)'}
+
+규칙:
+- 핵심 개념 위주로 3~6개
+- 질문은 한 문장, 답은 두 문장 이내
+- 내용에 없는 사실은 만들지 말 것
+- 아래 형식 그대로만 답할 것 (다른 설명은 붙이지 마)
+
+Q: 질문
+A: 답
+
+Q: 질문
+A: 답
+`;
+}

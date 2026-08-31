@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { store } from '../store'
+import { cards as cardStore, parseCards } from '../cards'
+import { buildCardsPrompt } from '../promptTemplate'
 import AppBar from '../components/AppBar.jsx'
 import Markdown from '../components/Markdown.jsx'
-import { IconCheck, IconCopy, IconLink, IconNote, IconSparkle, IconTrash } from '../icons'
+import { IconCards, IconCheck, IconCopy, IconLink, IconNote, IconSparkle, IconTrash } from '../icons'
 
 export default function ItemDetail() {
   const { id } = useParams()
@@ -16,6 +18,11 @@ export default function ItemDetail() {
   const [saving, setSaving] = useState(false)
   const [editingTags, setEditingTags] = useState(false)
   const [tagsInput, setTagsInput] = useState('')
+  const [cardCount, setCardCount] = useState(0)
+  const [cardPrompt, setCardPrompt] = useState('')
+  const [cardsPasted, setCardsPasted] = useState('')
+  const [cardsCopied, setCardsCopied] = useState(false)
+  const [savingCards, setSavingCards] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -27,7 +34,39 @@ export default function ItemDetail() {
       })
       .catch(() => setItem(null))
       .finally(() => setLoading(false))
+    cardStore.forItem(id).then((list) => setCardCount(list.length))
   }, [id])
+
+  function handleGenerateCards() {
+    setCardPrompt(
+      buildCardsPrompt({ title: item.title, summary: item.summary, rawContent: item.raw_content })
+    )
+  }
+
+  async function handleCopyCards() {
+    try {
+      await navigator.clipboard.writeText(cardPrompt)
+      setCardsCopied(true)
+      setTimeout(() => setCardsCopied(false), 2000)
+    } catch {
+      setCardsCopied(false)
+    }
+  }
+
+  async function handleSaveCards() {
+    const parsed = parseCards(cardsPasted)
+    if (!parsed.length) return
+    setSavingCards(true)
+    try {
+      await cardStore.addMany(id, parsed)
+      const list = await cardStore.forItem(id)
+      setCardCount(list.length)
+      setCardsPasted('')
+      setCardPrompt('')
+    } finally {
+      setSavingCards(false)
+    }
+  }
 
   async function handleGeneratePrompt() {
     const { prompt } = await store.getPrompt(id)
@@ -78,7 +117,11 @@ export default function ItemDetail() {
   }
 
   async function handleDelete() {
-    if (!confirm('이 지식 카드를 삭제할까요?')) return
+    const warning = cardCount
+      ? `이 지식 카드와 여기서 만든 학습 카드 ${cardCount}장을 삭제할까요?`
+      : '이 지식 카드를 삭제할까요?'
+    if (!confirm(warning)) return
+    await cardStore.removeForItem(id)
     await store.remove(id)
     navigate('/', { replace: true })
   }
@@ -249,6 +292,85 @@ export default function ItemDetail() {
                 onClick={() => {
                   setPrompt('')
                   setPasted('')
+                }}
+              >
+                취소
+              </button>
+            </>
+          )}
+        </div>
+
+        <div className="section">
+          <div className="section-label">
+            <IconCards width={14} height={14} />
+            학습 카드
+          </div>
+
+          {cardCount > 0 && !cardPrompt && (
+            <p className="hint" style={{ marginBottom: 12 }}>
+              이 지식으로 만든 카드 {cardCount}장이 학습 탭에서 복습됩니다.
+            </p>
+          )}
+
+          {cardCount === 0 && !cardPrompt && (
+            <p className="hint" style={{ marginBottom: 12 }}>
+              문답 카드를 만들어 두면 학습 탭에서 간격을 두고 다시 물어봅니다.
+            </p>
+          )}
+
+          {!cardPrompt ? (
+            <button className="block quiet" onClick={handleGenerateCards}>
+              <IconCards width={16} height={16} />
+              {cardCount > 0 ? '카드 더 만들기' : '학습 카드 만들기'}
+            </button>
+          ) : (
+            <>
+              <div className="step">
+                <div className="step-label">
+                  <span className="step-num">1</span>
+                  프롬프트를 복사해 Claude.ai에 붙여넣기
+                </div>
+                <div className="prompt-box">{cardPrompt}</div>
+                <button
+                  className="block secondary"
+                  style={{ marginTop: 10 }}
+                  onClick={handleCopyCards}
+                >
+                  {cardsCopied ? <IconCheck width={16} height={16} /> : <IconCopy width={16} height={16} />}
+                  {cardsCopied ? '복사됨' : '프롬프트 복사'}
+                </button>
+              </div>
+
+              <div className="step">
+                <div className="step-label">
+                  <span className="step-num">2</span>
+                  Claude의 답변을 붙여넣기
+                </div>
+                <textarea
+                  value={cardsPasted}
+                  onChange={(e) => setCardsPasted(e.target.value)}
+                  placeholder="Q와 A로 된 답변을 그대로 붙여넣으세요."
+                />
+                {cardsPasted.trim() && (
+                  <p className="hint" style={{ marginTop: 8 }}>
+                    카드 {parseCards(cardsPasted).length}장이 인식됐어요.
+                  </p>
+                )}
+              </div>
+
+              <button
+                className="block"
+                onClick={handleSaveCards}
+                disabled={savingCards || parseCards(cardsPasted).length === 0}
+              >
+                {savingCards ? '저장 중...' : '학습 카드 저장'}
+              </button>
+              <button
+                className="quiet block"
+                style={{ marginTop: 8 }}
+                onClick={() => {
+                  setCardPrompt('')
+                  setCardsPasted('')
                 }}
               >
                 취소

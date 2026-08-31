@@ -4,6 +4,7 @@ import BottomNav from './components/BottomNav.jsx'
 import ArchiveList from './pages/ArchiveList.jsx'
 import AddItem from './pages/AddItem.jsx'
 import ItemDetail from './pages/ItemDetail.jsx'
+import Review from './pages/Review.jsx'
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <div className="main-column">
         <Routes>
           <Route path="/" element={<ArchiveList />} />
+          <Route path="/review" element={<Review />} />
           <Route path="/add" element={<AddItem />} />
           <Route path="/items/:id" element={<ItemDetail />} />
         </Routes>

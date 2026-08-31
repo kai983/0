@@ -98,6 +98,16 @@ export function IconTrash(props) {
   )
 }
 
+export function IconCards(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="7" width="14" height="14" rx="2" />
+      <path d="M7 4h12a2 2 0 0 1 2 2v11" />
+      <path d="M7 12h6M7 16h4" />
+    </svg>
+  )
+}
+
 export function IconPalette(props) {
   return (
     <svg {...base} {...props}>

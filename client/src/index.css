@@ -392,6 +392,27 @@ a {
   font-weight: 700;
 }
 
+.nav-icon-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.nav-badge {
+  position: absolute;
+  top: -5px;
+  left: 11px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
 .page {
   padding: 14px 20px 24px;
 }
@@ -961,6 +982,106 @@ button:disabled {
   position: absolute;
   left: 0;
   color: var(--accent);
+}
+
+/* =========================================================
+   Review (learning)
+   ========================================================= */
+
+.review-card {
+  margin-top: 18px;
+  padding: 24px 20px;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--radius);
+}
+
+.review-front {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.03em;
+  text-align: center;
+  color: var(--text);
+}
+
+.review-divider {
+  height: 1px;
+  margin: 20px 0;
+  background: var(--border);
+}
+
+.review-back {
+  font-size: 15.5px;
+  line-height: 1.75;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.grade-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.grade-btn {
+  flex-direction: column;
+  gap: 2px;
+  min-height: 62px;
+  padding: 10px 4px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.grade-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.grade-hint {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-faint);
+}
+
+.grade-btn.grade-again {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.grade-btn.grade-again .grade-hint {
+  color: var(--danger);
+  opacity: 0.7;
+}
+
+.grade-btn.grade-easy {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.grade-btn.grade-easy .grade-hint {
+  color: var(--accent-ink);
+  opacity: 0.7;
+}
+
+.review-source {
+  display: block;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* =========================================================
