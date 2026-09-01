@@ -366,10 +366,6 @@ a {
   min-height: 100%;
 }
 
-.sidebar {
-  display: none;
-}
-
 .main-column {
   min-height: 100vh;
   padding-bottom: calc(var(--bottomnav-h) + var(--safe-bottom) + 12px);

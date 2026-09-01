@@ -14,11 +14,16 @@ const MODELS = ['gemini-flash-latest', 'gemini-2.5-flash', 'gemini-flash-lite-la
 const endpointFor = (model) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
 
+// The pin saves a wasted round trip while a model is down, but an outage that
+// lasted a minute must not demote the app for good, so it expires.
+const MODEL_PIN_TTL = 3 * 60 * 60 * 1000
+
 /** The model that last answered, tried first so a working one stays working. */
 function preferredModel() {
   try {
-    const saved = localStorage.getItem(MODEL_STORAGE)
-    return MODELS.includes(saved) ? saved : ''
+    const { model, at } = JSON.parse(localStorage.getItem(MODEL_STORAGE) || '{}')
+    if (!MODELS.includes(model) || Date.now() - at > MODEL_PIN_TTL) return ''
+    return model
   } catch {
     return ''
   }
@@ -27,7 +32,7 @@ function preferredModel() {
 function rememberModel(model) {
   try {
     if (model === MODELS[0]) localStorage.removeItem(MODEL_STORAGE)
-    else localStorage.setItem(MODEL_STORAGE, model)
+    else localStorage.setItem(MODEL_STORAGE, JSON.stringify({ model, at: Date.now() }))
   } catch {
     // Best effort - without storage every request just starts from the top.
   }
@@ -39,9 +44,14 @@ function modelOrder() {
   return first ? [first, ...MODELS.filter((m) => m !== first)] : [...MODELS]
 }
 
-/** Google is out of capacity for this model, or retired it - try another. */
-function modelUnavailable(status, data) {
-  if (status === 503) return true
+/** Come back later, but a different model may have room right now. Free-tier
+    quota is counted per model, so 429 belongs here as much as 503 does. */
+function modelBusy(status) {
+  return status === 503 || status === 429
+}
+
+/** This model is gone for this account - the others may still exist. */
+function modelRetired(status, data) {
   return status === 404 && /model/i.test(data?.error?.message || '')
 }
 
@@ -186,24 +196,56 @@ async function requestModel(model, body, timeoutMs) {
 }
 
 /**
- * Walks the model list until one answers. A busy or retired model is skipped
- * immediately; only when every model is busy does it wait and go round once
- * more, because that is the one case where waiting can actually help.
+ * Walks the model list until one answers, and reports what it found rather
+ * than whatever happened to come last.
+ *
+ * - busy or retired: move on, that is the whole point of carrying a list
+ * - a thrown error (timeout, no network): move on too, so one hung model
+ *   cannot take the healthy ones down with it
+ * - anything else (a bad key, a malformed request): the next model would say
+ *   the same thing, so stop and report it
+ *
+ * Only an all-busy round is worth waiting on, so only that goes round twice.
  */
 async function request(body, timeoutMs = TEXT_TIMEOUT) {
-  let last
+  let busy = null
+  let thrown = null
+
   for (let pass = 0; pass < 2; pass++) {
-    if (pass > 0) await wait(2000)
+    if (pass > 0) {
+      if (!busy) break
+      await wait(2000)
+    }
     for (const model of modelOrder()) {
-      const result = await requestModel(model, body, timeoutMs)
-      last = result
-      if (!modelUnavailable(result.status, result.data)) {
-        if (result.status >= 200 && result.status < 300) rememberModel(model)
-        return result
+      let result
+      try {
+        result = await requestModel(model, body, timeoutMs)
+      } catch (err) {
+        thrown = err
+        continue
       }
+
+      if (result.status >= 200 && result.status < 300) {
+        rememberModel(model)
+        return { ...result, model }
+      }
+      if (modelBusy(result.status)) {
+        // A spent quota names a limit the user can wait out, so it outranks a
+        // capacity blip when both show up in the same round.
+        if (!busy || (result.status === 429 && busy.status === 503)) {
+          busy = { ...result, model }
+        }
+        continue
+      }
+      if (modelRetired(result.status, result.data)) continue
+      return { ...result, model }
     }
   }
-  return last
+
+  if (busy) return busy
+  if (thrown) throw thrown
+  // Every model is retired for this account - report it as the 404 it is.
+  return { status: 404, data: { error: { message: '쓸 수 있는 모델이 없어요.' } }, model: '' }
 }
 
 async function generate(parts, tools, timeoutMs) {
@@ -253,10 +295,9 @@ export async function testAiConnection() {
   try {
     // request() already walks every model twice, so anything still busy here
     // means Google has no free capacity at all right now.
-    const { status, data } = await request({ contents: [{ parts: [{ text: '안녕' }] }] })
+    const { status, data, model } = await request({ contents: [{ parts: [{ text: '안녕' }] }] })
 
     if (status >= 200 && status < 300) {
-      const model = preferredModel() || MODELS[0]
       return { state: 'ok', text: `연결 성공 - 자동 요약을 쓸 수 있어요. (${model})` }
     }
     if (status === 503) {
@@ -266,7 +307,7 @@ export async function testAiConnection() {
       }
     }
     if (status === 429) {
-      return { state: 'busy', text: '오늘 무료 한도를 다 썼어요. 내일 다시 쓸 수 있어요.' }
+      return { state: 'busy', text: '무료 한도에 걸렸어요. 모든 모델이 같은 상태라 잠시 뒤 다시 해보세요.' }
     }
     return { state: 'bad', text: `실패 (${status}) ${data?.error?.message || ''}`.trim() }
   } catch (err) {

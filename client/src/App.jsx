@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import Sidebar from './Sidebar.jsx'
 import BottomNav from './components/BottomNav.jsx'
 import Incoming from './pages/Incoming.jsx'
 import ArchiveList from './pages/ArchiveList.jsx'
@@ -30,7 +29,6 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <Sidebar />
       <div className="main-column">
         <Routes>
           <Route path="/" element={<ArchiveList />} />
