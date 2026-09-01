@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: 'Pretendard', 'Apple SD Gothic Neo', system-ui, sans-serif; }
+    a { color: #3182f6; } a:hover { color: #1b64da; }
+  </style>
+</helmet>
+<div style="width: 390px; height: 844px; background: rgba(25,31,40,0.42); display: flex; flex-direction: column; justify-content: flex-end; box-sizing: border-box;">
+  <div style="background: #ffffff; border-radius: 24px 24px 0 0; padding: 8px 20px 26px; display: flex; flex-direction: column;">
+
+    <div style="width: 40px; height: 4px; border-radius: 2px; background: #e5e8eb; margin: 0 auto 18px;"></div>
+
+    <div style="font-size: 20px; font-weight: 700; color: #191f28; letter-spacing: -0.03em;">설정</div>
+
+    <div style="font-size: 13px; font-weight: 700; color: #8b95a1; margin: 22px 0 10px;">테마</div>
+    <div style="display: flex; gap: 8px;">
+      <div style="flex: 1; padding: 12px 10px; border-radius: 12px; border: 1.5px solid #3182f6; background: #fff; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <div style="width: 34px; height: 34px; border-radius: 9px; background: #fff; border: 1px solid #f2f4f6; display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 0 7px; box-sizing: border-box;">
+          <div style="height: 3px; border-radius: 2px; background: #191f28;"></div>
+          <div style="height: 3px; width: 70%; border-radius: 2px; background: #c9cfd6;"></div>
+          <div style="height: 3px; width: 45%; border-radius: 2px; background: #3182f6;"></div>
+        </div>
+        <div style="font-size: 12px; font-weight: 700; color: #191f28;">기본</div>
+      </div>
+      <div style="flex: 1; padding: 12px 10px; border-radius: 12px; border: 1px solid #f2f4f6; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <div style="width: 34px; height: 34px; border-radius: 9px; background: #fbfaf7; border: 1px solid #eae6dd; display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 0 7px; box-sizing: border-box;">
+          <div style="height: 3px; border-radius: 2px; background: #171614;"></div>
+          <div style="height: 3px; width: 70%; border-radius: 2px; background: #c8c2b6;"></div>
+          <div style="height: 3px; width: 45%; border-radius: 2px; background: #2f5d50;"></div>
+        </div>
+        <div style="font-size: 12px; font-weight: 600; color: #6b7684;">편집형</div>
+      </div>
+      <div style="flex: 1; padding: 12px 10px; border-radius: 12px; border: 1px solid #f2f4f6; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <div style="width: 34px; height: 34px; border-radius: 9px; background: #16171b; display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 0 7px; box-sizing: border-box;">
+          <div style="height: 3px; border-radius: 2px; background: #f3f4f5;"></div>
+          <div style="height: 3px; width: 70%; border-radius: 2px; background: #5b606a;"></div>
+          <div style="height: 3px; width: 45%; border-radius: 2px; background: #e8a33d;"></div>
+        </div>
+        <div style="font-size: 12px; font-weight: 600; color: #6b7684;">몰입형</div>
+      </div>
+    </div>
+
+    <div style="font-size: 13px; font-weight: 700; color: #8b95a1; margin: 24px 0 10px;">자동 AI 요약</div>
+    <div style="padding: 14px 16px; border-radius: 12px; background: #f9fafb; display: flex; align-items: center; gap: 10px;">
+      <div style="width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg, #4593ff, #5b5ff0); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 3l2.1 6.2L20 11l-5.9 1.8L12 19l-2.1-6.2L4 11l5.9-1.8z"/></svg>
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 14px; font-weight: 700; color: #191f28;">내장 키로 동작 중</div>
+        <div style="font-size: 12px; color: #8b95a1;">설정할 것 없어요</div>
+      </div>
+      <div style="font-size: 13px; font-weight: 600; color: #3182f6;">변경</div>
+    </div>
+
+    <div style="font-size: 13px; font-weight: 700; color: #8b95a1; margin: 24px 0 10px;">백업</div>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="padding: 14px 4px; display: flex; align-items: center; gap: 12px;">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#4e5968" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11"/><path d="M8 10.5l4 4 4-4"/><path d="M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2"/></svg>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 16px; color: #191f28; line-height: 1.375;">내보내기</div>
+          <div style="font-size: 13px; color: #8b95a1;">마지막 백업 - 3일 전</div>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9cfd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </div>
+      <div style="margin: 0 6px; padding: 14px 10px; border-radius: 10px; background: #f2f4f6; display: flex; align-items: center; gap: 12px;">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#4e5968" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14V3"/><path d="M8 6.5l4-4 4 4"/><path d="M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2"/></svg>
+        <div style="flex: 1; font-size: 16px; color: #191f28; line-height: 1.375;">가져오기</div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9cfd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+    <div style="font-size: 12px; color: #b0b8c1; margin-top: 8px; padding: 0 4px; line-height: 1.5;">눌린 줄이 안쪽으로 들어가며 둥글어집니다 - 회색 띠가 화면 끝까지 번지지 않게.</div>
+
+    <div style="font-size: 12px; color: #b0b8c1; text-align: center; margin-top: 22px;">버전 1.1</div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
