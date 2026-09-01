@@ -16,21 +16,21 @@ export const THEMES = [
     name: '편집형',
     tagline: '읽기 우선 - 넉넉한 여백',
     dark: false,
-    swatch: { bg: '#fbfaf7', ink: '#171614', accent: '#2f5d50' },
+    swatch: { bg: '#faf7f2', ink: '#1f1b16', accent: '#b04a2f' },
   },
   {
     id: 'index',
     name: '인덱스형',
     tagline: '찾기 우선 - 한 화면에 많이',
     dark: false,
-    swatch: { bg: '#ffffff', ink: '#111111', accent: '#111111' },
+    swatch: { bg: '#fcfcfd', ink: '#16181d', accent: '#16181d' },
   },
   {
     id: 'immersive',
     name: '몰입형',
     tagline: '다크 - 밤에 보기 편하게',
     dark: true,
-    swatch: { bg: '#14130f', ink: '#f2efe6', accent: '#e8a33d' },
+    swatch: { bg: '#0b0c0e', ink: '#edeff3', accent: '#ecae52' },
   },
 ]
 

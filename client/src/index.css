@@ -6,6 +6,24 @@
   src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
 }
 
+/* Korean serif for the editorial theme - KS X 1001 subset, so rare syllables
+   fall back to Pretendard. */
+@font-face {
+  font-family: 'Noto Serif KR';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/NotoSerifKR-400-subset.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif KR';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/NotoSerifKR-600-subset.woff2') format('woff2');
+}
+
 /* =========================================================
    Themes - every screen reads these tokens, so switching the
    data-theme attribute on <html> restyles the whole app.
@@ -13,27 +31,31 @@
 
 :root,
 [data-theme='editorial'] {
-  --bg: #fbfaf7;
-  --surface: #fbfaf7;
-  --border: #eae6dd;
-  --text: #171614;
-  --text-muted: #7e7a72;
+  --bg: #faf7f2;
+  --surface: #f2ede4;
+  --pressed-bg: #f2ede4;
+  --border: #e5dfd5;
+  --text: #1f1b16;
+  --text-muted: #6e675d;
   --text-faint: #a09a90;
-  --accent: #2f5d50;
-  --accent-soft: #e7efea;
-  --accent-ink: #2f5d50;
+  --accent: #b04a2f;
+  --accent-soft: #f2ede4;
+  --accent-ink: #1f1b16;
   --on-accent: #ffffff;
   --danger: #c0392b;
   --code-bg: #262421;
   --code-ink: #f0ebe2;
 
+  --reading-font: 'Noto Serif KR', 'Pretendard', 'Apple SD Gothic Neo', serif;
+  --title-font: var(--reading-font);
+  --h1-font: var(--reading-font);
   --h1-size: 26px;
-  --h1-weight: 700;
-  --h1-spacing: -0.035em;
+  --h1-weight: 600;
+  --h1-spacing: -0.01em;
 
-  --search-bg: #f1eee7;
-  --search-h: 44px;
-  --search-radius: 22px;
+  --search-bg: transparent;
+  --search-h: 42px;
+  --search-radius: 0;
 
   --chip-bg: transparent;
   --chip-color: var(--text-faint);
@@ -42,153 +64,192 @@
   --chip-radius: 0;
   --chip-pad: 0 0 6px;
   --chip-weight: 500;
-  --chip-gap: 17px;
+  --chip-gap: 18px;
+  --chip-size: 13px;
 
-  --item-layout: stack;
-  --item-pad: 22px 0;
+  --meta-size: 11px;
+  --meta-weight: 600;
+  --meta-spacing: 0.08em;
+  --meta-color: var(--text-muted);
+
+  --item-pad: 20px 0;
   --item-gap: 0px;
   --item-bg: transparent;
   --item-radius: 0;
   --item-divider: 1px solid var(--border);
-  --item-title-size: 20px;
-  --item-title-weight: 700;
-  --item-title-spacing: -0.03em;
-  --item-title-lh: 1.4;
-  --item-excerpt-size: 13.5px;
-  --item-excerpt-lh: 1.8;
+  --item-title-size: 19px;
+  --item-title-weight: 600;
+  --item-title-spacing: 0;
+  --item-title-lh: 1.5;
+  --item-excerpt-size: 14px;
+  --item-excerpt-lh: 1.65;
   --item-excerpt-lines: 2;
 
   --tag-bg: transparent;
   --tag-color: var(--text-faint);
   --tag-pad: 0;
   --tag-radius: 0;
-  --tag-size: 11.5px;
+  --tag-size: 12px;
   --tag-sep: '-';
 
-  --card-bg: #ffffff;
+  --btn-bg: #1f1b16;
+  --btn-ink: #faf7f2;
+  --btn-radius: 2px;
+  --btn-weight: 600;
+
+  --card-bg: #fffdf9;
   --card-border: 1px solid var(--border);
-  --radius: 12px;
+  --radius: 4px;
 }
 
 [data-theme='index'] {
-  --bg: #ffffff;
+  --bg: #fcfcfd;
   --surface: #ffffff;
-  --border: #f0f0ee;
-  --text: #111111;
-  --text-muted: #8c8c88;
-  --text-faint: #b4b4b0;
-  --accent: #111111;
-  --accent-soft: #f0f0ee;
-  --accent-ink: #111111;
+  --pressed-bg: #f0f1f3;
+  --border: #e9eaec;
+  --text: #16181d;
+  --text-muted: #6f7580;
+  --text-faint: #9aa0aa;
+  --accent: #16181d;
+  --accent-soft: #f0f1f3;
+  --accent-ink: #16181d;
   --on-accent: #ffffff;
   --danger: #d92d20;
   --code-bg: #1c1c1a;
   --code-ink: #f2f2f0;
 
+  --reading-font: var(--font);
+  --title-font: var(--font);
+  --h1-font: var(--font);
   --h1-size: 19px;
   --h1-weight: 700;
-  --h1-spacing: -0.02em;
+  --h1-spacing: -0.01em;
 
-  --search-bg: #f5f5f4;
+  --search-bg: #f0f1f3;
   --search-h: 38px;
-  --search-radius: 10px;
+  --search-radius: 8px;
 
-  --chip-bg: transparent;
-  --chip-color: var(--text-faint);
-  --chip-active-bg: transparent;
-  --chip-active-color: var(--text);
-  --chip-radius: 0;
-  --chip-pad: 0 0 4px;
-  --chip-weight: 400;
-  --chip-gap: 14px;
+  --chip-bg: #f0f1f3;
+  --chip-color: var(--text-muted);
+  --chip-active-bg: #16181d;
+  --chip-active-color: #ffffff;
+  --chip-radius: 4px;
+  --chip-pad: 4px 8px;
+  --chip-weight: 500;
+  --chip-gap: 6px;
+  --chip-size: 11px;
 
-  --item-layout: gutter;
-  --item-pad: 13px 0;
+  --meta-size: 12px;
+  --meta-weight: 400;
+  --meta-spacing: 0;
+  --meta-color: var(--text-faint);
+
+  --item-pad: 0;
   --item-gap: 0px;
   --item-bg: transparent;
   --item-radius: 0;
-  --item-divider: 1px solid var(--border);
-  --item-title-size: 14.5px;
-  --item-title-weight: 700;
-  --item-title-spacing: -0.02em;
-  --item-title-lh: 1.45;
+  --item-divider: none;
+  --item-title-size: 14px;
+  --item-title-weight: 500;
+  --item-title-spacing: 0;
+  --item-title-lh: 1.4;
   --item-excerpt-size: 12.5px;
   --item-excerpt-lh: 1.5;
   --item-excerpt-lines: 1;
 
-  --tag-bg: transparent;
-  --tag-color: var(--text-faint);
-  --tag-pad: 0;
-  --tag-radius: 0;
-  --tag-size: 10.5px;
-  --tag-sep: '-';
+  --tag-bg: #f0f1f3;
+  --tag-color: var(--text-muted);
+  --tag-pad: 2px 6px;
+  --tag-radius: 4px;
+  --tag-size: 11px;
+  --tag-sep: '';
+
+  --btn-bg: #16181d;
+  --btn-ink: #ffffff;
+  --btn-radius: 6px;
+  --btn-weight: 600;
 
   --card-bg: #ffffff;
   --card-border: 1px solid var(--border);
-  --radius: 10px;
+  --radius: 8px;
 }
 
 [data-theme='immersive'] {
-  --bg: #14130f;
-  --surface: #211e18;
-  --border: #2a2620;
-  --text: #f2efe6;
-  --text-muted: #8a857a;
-  --text-faint: #6f6a5e;
-  --accent: #e8a33d;
-  --accent-soft: rgba(232, 163, 61, 0.16);
-  --accent-ink: #e8a33d;
-  --on-accent: #14130f;
+  --bg: #0b0c0e;
+  --surface: #141519;
+  --pressed-bg: #22242a;
+  --border: rgba(255, 255, 255, 0.07);
+  --text: #edeff3;
+  --text-muted: #9ba1ac;
+  --text-faint: #5c616b;
+  --accent: #ecae52;
+  --accent-soft: rgba(236, 174, 82, 0.16);
+  --accent-ink: #ecae52;
+  --on-accent: #0b0c0e;
   --danger: #ef6b5e;
-  --code-bg: #0d0c09;
-  --code-ink: #e8e3d6;
+  --code-bg: #060708;
+  --code-ink: #e8eaef;
 
-  --h1-size: 25px;
-  --h1-weight: 700;
-  --h1-spacing: -0.03em;
+  --reading-font: var(--font);
+  --title-font: var(--font);
+  --h1-font: var(--font);
+  --h1-size: 22px;
+  --h1-weight: 600;
+  --h1-spacing: -0.01em;
 
-  --search-bg: #221f19;
-  --search-h: 44px;
+  --search-bg: #141519;
+  --search-h: 46px;
   --search-radius: 14px;
 
-  --chip-bg: transparent;
-  --chip-color: var(--text-muted);
-  --chip-active-bg: var(--accent-soft);
+  --chip-bg: rgba(255, 255, 255, 0.08);
+  --chip-color: rgba(255, 255, 255, 0.75);
+  --chip-active-bg: rgba(236, 174, 82, 0.2);
   --chip-active-color: var(--accent);
   --chip-radius: 999px;
-  --chip-pad: 6px 13px;
+  --chip-pad: 7px 14px;
   --chip-weight: 500;
   --chip-gap: 7px;
+  --chip-size: 13px;
 
-  --item-layout: stack;
-  --item-pad: 0;
-  --item-gap: 28px;
-  --item-bg: transparent;
-  --item-radius: 0;
+  --meta-size: 12px;
+  --meta-weight: 500;
+  --meta-spacing: 0;
+  --meta-color: var(--text-muted);
+
+  --item-pad: 16px;
+  --item-gap: 10px;
+  --item-bg: #141519;
+  --item-radius: 16px;
   --item-divider: none;
-  --item-title-size: 19px;
-  --item-title-weight: 700;
-  --item-title-spacing: -0.02em;
-  --item-title-lh: 1.4;
-  --item-excerpt-size: 13.5px;
-  --item-excerpt-lh: 1.75;
+  --item-title-size: 17px;
+  --item-title-weight: 600;
+  --item-title-spacing: -0.01em;
+  --item-title-lh: 1.45;
+  --item-excerpt-size: 14px;
+  --item-excerpt-lh: 1.65;
   --item-excerpt-lines: 2;
 
-  --tag-bg: transparent;
-  --tag-color: var(--accent);
-  --tag-pad: 0;
-  --tag-radius: 0;
-  --tag-size: 11px;
-  --tag-sep: '-';
+  --tag-bg: rgba(255, 255, 255, 0.08);
+  --tag-color: rgba(255, 255, 255, 0.75);
+  --tag-pad: 3px 10px;
+  --tag-radius: 999px;
+  --tag-size: 11.5px;
+  --tag-sep: '';
 
-  --card-bg: #1c1a15;
-  --card-border: 1px solid var(--border);
-  --radius: 14px;
+  --btn-bg: #ecae52;
+  --btn-ink: #0b0c0e;
+  --btn-radius: 12px;
+  --btn-weight: 700;
+
+  --card-bg: #141519;
+  --card-border: none;
+  --radius: 16px;
 }
 
 [data-theme='toss'] {
   --bg: #ffffff;
   --surface: #f9fafb;
+  --pressed-bg: #f2f4f6;
   --border: #f2f4f6;
   --text: #191f28;
   --text-muted: #8b95a1;
@@ -201,47 +262,60 @@
   --code-bg: #191f28;
   --code-ink: #f2f4f6;
 
-  --h1-size: 24px;
+  --reading-font: var(--font);
+  --title-font: var(--font);
+  --h1-font: var(--font);
+  --h1-size: 22px;
   --h1-weight: 700;
-  --h1-spacing: -0.035em;
+  --h1-spacing: -0.02em;
 
   --search-bg: #f2f4f6;
   --search-h: 48px;
   --search-radius: 14px;
 
   --chip-bg: #f2f4f6;
-  --chip-color: #6b7684;
+  --chip-color: #4e5968;
   --chip-active-bg: #e8f3ff;
   --chip-active-color: var(--accent);
-  --chip-radius: 999px;
-  --chip-pad: 8px 14px;
+  --chip-radius: 8px;
+  --chip-pad: 7px 12px;
   --chip-weight: 600;
   --chip-gap: 7px;
+  --chip-size: 13px;
 
-  --item-layout: stack;
-  --item-pad: 14px 16px;
-  --item-gap: 2px;
+  --meta-size: 13px;
+  --meta-weight: 500;
+  --meta-spacing: -0.01em;
+  --meta-color: var(--text-muted);
+
+  --item-pad: 15px 0;
+  --item-gap: 0px;
   --item-bg: transparent;
-  --item-radius: 12px;
+  --item-radius: 0;
   --item-divider: none;
   --item-title-size: 16px;
-  --item-title-weight: 700;
-  --item-title-spacing: -0.02em;
-  --item-title-lh: 1.375;
-  --item-excerpt-size: 14px;
-  --item-excerpt-lh: 1.5;
+  --item-title-weight: 600;
+  --item-title-spacing: -0.01em;
+  --item-title-lh: 1.45;
+  --item-excerpt-size: 15px;
+  --item-excerpt-lh: 1.6;
   --item-excerpt-lines: 2;
 
-  --tag-bg: #eef1f4;
-  --tag-color: #6b7684;
+  --tag-bg: #f2f4f6;
+  --tag-color: #4e5968;
   --tag-pad: 3px 8px;
   --tag-radius: 6px;
   --tag-size: 12px;
   --tag-sep: '';
 
+  --btn-bg: var(--accent);
+  --btn-ink: #ffffff;
+  --btn-radius: 14px;
+  --btn-weight: 600;
+
   --card-bg: #f9fafb;
   --card-border: none;
-  --radius: 16px;
+  --radius: 20px;
 }
 
 :root {
@@ -436,10 +510,32 @@ a {
 
 .list-title {
   margin: 0;
+  font-family: var(--h1-font, var(--font));
   font-size: var(--h1-size);
   font-weight: var(--h1-weight);
   letter-spacing: var(--h1-spacing);
   line-height: 1.25;
+}
+
+/* The editorial masthead opens with a short accent rule, like a section front. */
+[data-theme='editorial'] .list-title::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 4px;
+  background: var(--accent);
+  margin-bottom: 12px;
+}
+
+[data-theme='editorial'] .list-count {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+[data-theme='editorial'] body {
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .list-count {
@@ -459,6 +555,12 @@ a {
   background: var(--search-bg);
   border: none;
   border-radius: var(--search-radius);
+}
+
+/* Editorial search is a bare hairline rule, not a filled field. */
+[data-theme='editorial'] .search-box {
+  border-bottom: 1px solid #d8d1c5;
+  padding: 0 2px;
 }
 
 .search-box svg {
@@ -510,7 +612,7 @@ a {
   border: none;
   border-radius: var(--chip-radius);
   background: var(--chip-bg);
-  font-size: 13px;
+  font-size: var(--chip-size, 13px);
   font-family: inherit;
   font-weight: var(--chip-weight);
   letter-spacing: -0.02em;
@@ -549,15 +651,111 @@ a {
   border-bottom: none;
 }
 
-/* The index theme puts the date in a left gutter so titles line up. */
-[data-theme='index'] .item-card {
-  grid-template-columns: 36px 1fr;
-  grid-template-areas: 'meta title' '. excerpt';
-  column-gap: 10px;
+/* Date group headers exist for every theme but only the index ledger shows
+   them - elsewhere whitespace does the grouping. */
+.date-group {
+  display: none;
 }
 
-[data-theme='index'] .item-tags {
+[data-theme='index'] .date-group {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 16px 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+[data-theme='index'] .date-group:first-child {
+  padding-top: 4px;
+}
+
+.date-group span {
+  font-weight: 500;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The index theme is a ledger: one 48px row per item - source dot, one-line
+   title, first tag, and a fixed date column that aligns down the whole list. */
+[data-theme='index'] .item-card {
+  position: relative;
+  grid-template-columns: 8px minmax(0, 1fr) auto auto auto;
+  grid-template-areas: 'dot title state tags date';
+  align-items: center;
+  column-gap: 10px;
+  min-height: 48px;
+  border-bottom: none;
+}
+
+[data-theme='index'] .item-card::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+[data-theme='index'] .item-card:last-child::after {
   display: none;
+}
+
+/* display: contents lifts the meta children into the row grid, so the state
+   chip and the short date can take their own columns. */
+[data-theme='index'] .item-meta {
+  display: contents;
+}
+
+[data-theme='index'] .item-excerpt {
+  display: none;
+}
+
+[data-theme='index'] .item-card .item-tags {
+  display: flex;
+  grid-area: tags;
+  margin: 0;
+  flex-wrap: nowrap;
+}
+
+/* A ledger row has room for one tag, and never at the title's expense. */
+[data-theme='index'] .item-card .item-tags .tag:not(:first-child) {
+  display: none;
+}
+
+[data-theme='index'] .item-card .item-tags .tag {
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-dot {
+  display: none;
+  grid-area: dot;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+[data-theme='index'] .item-dot {
+  display: block;
+}
+
+/* Muted pigments - color says "source type" without shouting. */
+.item-dot.dot-video {
+  background: #c08a3e;
+}
+
+.item-dot.dot-link {
+  background: #5b7fdb;
+}
+
+.item-dot.dot-note {
+  background: #4f9e6b;
 }
 
 .item-meta {
@@ -565,9 +763,10 @@ a {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--text-faint);
+  font-size: var(--meta-size, 11.5px);
+  font-weight: var(--meta-weight, 500);
+  letter-spacing: var(--meta-spacing, normal);
+  color: var(--meta-color, var(--text-faint));
   line-height: 1.5;
 }
 
@@ -580,14 +779,26 @@ a {
   display: none;
 }
 
-/* The pressed row pulls in and rounds, instead of flashing a full-bleed bar. */
+/* Pressed rows wash to each theme's --pressed-bg. Toss adds its signature
+   pull to 0.98 with a slower spring-out than the press-in. */
+.item-card:active {
+  background: var(--pressed-bg);
+}
+
+[data-theme='toss'] .item-card {
+  border-radius: 12px;
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s ease-out,
+    box-shadow 0.25s ease-out;
+}
+
+/* The wash spreads 8px past the text through the shadow, so the row never
+   reflows while it shrinks. */
 [data-theme='toss'] .item-card:active {
-  background: #f2f4f6;
-  border-radius: 10px;
-  margin-left: 6px;
-  margin-right: 6px;
-  padding-left: 10px;
-  padding-right: 10px;
+  box-shadow: 0 0 0 8px var(--pressed-bg);
+  transform: scale(0.98);
+  transition-duration: 0.08s;
 }
 
 .date-short {
@@ -595,7 +806,12 @@ a {
 }
 
 [data-theme='index'] .date-short {
-  display: inline;
+  display: block;
+  grid-area: date;
+  font-size: 12px;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 [data-theme='index'] .date-full {
@@ -611,18 +827,17 @@ a {
   font-weight: 600;
 }
 
-[data-theme='index'] .item-meta {
-  display: block;
-  padding-top: 2px;
-}
-
 [data-theme='index'] .item-state {
-  display: none;
+  grid-area: state;
+  margin: 0;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
 .item-title {
   grid-area: title;
   margin: 6px 0 0;
+  font-family: var(--title-font, var(--font));
   font-size: var(--item-title-size);
   font-weight: var(--item-title-weight);
   letter-spacing: var(--item-title-spacing);
@@ -652,10 +867,6 @@ a {
   -webkit-line-clamp: var(--item-excerpt-lines);
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-[data-theme='index'] .item-excerpt {
-  margin: 3px 0 0;
 }
 
 .item-tags {
@@ -780,15 +991,15 @@ label {
 button {
   cursor: pointer;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--btn-radius, 12px);
   padding: 12px 18px;
   min-height: 48px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: var(--btn-weight, 700);
   font-family: inherit;
   letter-spacing: -0.02em;
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--btn-bg, var(--accent));
+  color: var(--btn-ink, var(--on-accent));
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -833,6 +1044,17 @@ button:disabled {
   padding: 16px;
 }
 
+[data-theme='toss'] .card {
+  padding: 18px;
+}
+
+/* Editorial doesn't box its reading content - the summary sits on the paper. */
+[data-theme='editorial'] .section .card {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
 /* =========================================================
    Detail page
    ========================================================= */
@@ -844,11 +1066,22 @@ button:disabled {
 }
 
 .detail-title {
+  font-family: var(--title-font, var(--font));
   font-size: 22px;
   font-weight: 700;
   line-height: 1.4;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   margin: 0 0 10px;
+}
+
+[data-theme='editorial'] .detail-title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+[data-theme='immersive'] .detail-title {
+  font-weight: 600;
 }
 
 .detail-meta {
@@ -859,6 +1092,32 @@ button:disabled {
   font-size: 12.5px;
   font-weight: 500;
   color: var(--text-faint);
+}
+
+[data-theme='editorial'] .detail-meta {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* The immersive detail opens under one ambient accent glow - elevation and
+   atmosphere, Spotify now-playing style. */
+[data-theme='immersive'] .page-detail {
+  position: relative;
+  z-index: 0;
+}
+
+[data-theme='immersive'] .page-detail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 300px;
+  background: radial-gradient(circle at 50% 0%, rgba(236, 174, 82, 0.13), transparent 65%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .detail-source {
@@ -1109,6 +1368,50 @@ button:disabled {
   color: var(--accent);
 }
 
+/* Editorial reading: serif body at 1.8, letterspaced section labels, and an
+   accent rule over the lede - the Korean-safe stand-in for a drop cap. */
+[data-theme='editorial'] .markdown-paragraph,
+[data-theme='editorial'] .markdown-list li {
+  font-family: var(--reading-font);
+  line-height: 1.8;
+}
+
+[data-theme='editorial'] .markdown-subheading {
+  font-family: var(--reading-font);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+[data-theme='editorial'] .markdown-heading {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+[data-theme='editorial'] .markdown-heading:first-child + .markdown-paragraph {
+  font-family: var(--reading-font);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.75;
+  letter-spacing: 0;
+}
+
+[data-theme='editorial'] .markdown-heading:first-child + .markdown-paragraph::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 12px;
+}
+
+/* Dark reading body: its own tone between primary and secondary, because
+   long Hangul text at full white glares and at 60% strains. */
+[data-theme='immersive'] .markdown-paragraph,
+[data-theme='immersive'] .markdown-list li {
+  color: #c3c8d2;
+}
+
 .incoming-preview {
   white-space: pre-wrap;
   word-break: break-word;
@@ -1203,6 +1506,13 @@ button:disabled {
   color: var(--accent-ink);
 }
 
+/* The editorial accent is terracotta - too close to the "다시" red for a
+   "좋음" button, so that grade keeps a deep green of its own. */
+[data-theme='editorial'] .grade-btn.grade-good {
+  background: color-mix(in srgb, #2f5d50 12%, var(--bg));
+  color: #2f5d50;
+}
+
 .grade-btn.grade-easy {
   background: color-mix(in srgb, #12b76a 14%, var(--bg));
   color: #12b76a;
@@ -1244,9 +1554,14 @@ button:disabled {
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(20, 19, 15, 0.36);
+  background: rgba(20, 19, 15, 0.4);
   display: flex;
   align-items: flex-end;
+}
+
+/* Dark sheets need a heavier scrim and an elevated (lighter) surface. */
+[data-theme='immersive'] .sheet-backdrop {
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .sheet {
@@ -1256,6 +1571,10 @@ button:disabled {
   padding: 8px 20px calc(20px + var(--safe-bottom));
   max-height: 88vh;
   overflow-y: auto;
+}
+
+[data-theme='immersive'] .sheet {
+  background: #141519;
 }
 
 .sheet-handle {
@@ -1357,7 +1676,7 @@ button:disabled {
   margin: 0 0 6px;
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .key-status svg {
@@ -1411,7 +1730,7 @@ button:disabled {
 }
 
 .test-result.ok {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .test-result.bad {

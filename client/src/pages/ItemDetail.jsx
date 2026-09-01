@@ -232,7 +232,7 @@ export default function ItemDetail() {
         }
       />
 
-      <div className="page">
+      <div className="page page-detail">
         <div className="detail-header">
           <h2 className="detail-title">{item.title}</h2>
           <div className="detail-meta">

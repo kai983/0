@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { excerptOf, store } from '../store'
 import ThemeSheet from '../components/ThemeSheet.jsx'
 import { applyTheme, getTheme } from '../theme'
 import { IconLink, IconNote, IconPalette, IconSearch, IconVideo } from '../icons'
 import { isVideoSource } from '../ai'
-import { daysSince } from '../dates'
+import { dateBucket, daysSince } from '../dates'
 
 export default function ArchiveList() {
   const [items, setItems] = useState([])
@@ -109,36 +109,45 @@ export default function ArchiveList() {
         </div>
       ) : (
         <div className="item-list">
-          {items.map((item) => {
-            const excerpt = excerptOf(item)
-            return (
-              <Link
-                key={item.id}
-                to={`/items/${item.id}`}
-                className={`item-card ${item.summary ? '' : 'pending'}`}
-              >
-                <div className="item-meta">
-                  <SourceGlyph kind={sourceKind(item)} />
-                  <span className="date-full">
-                    {SOURCE_LABEL[sourceKind(item)]} · {relativeDate(item.updated_at)}
-                  </span>
-                  <span className="date-short">{formatShortDate(item.updated_at)}</span>
-                  {!item.summary && <span className="item-state">요약 전</span>}
-                </div>
-                <h2 className="item-title">{item.title}</h2>
-                {excerpt && <p className="item-excerpt">{excerpt}</p>}
-                {item.tags.length > 0 && (
-                  <div className="item-tags">
-                    {item.tags.map((t) => (
-                      <span key={t} className="tag">
-                        {t}
+          {groupByDate(items).map((group) => (
+            <Fragment key={group.label}>
+              <div className="date-group">
+                {group.label} <span>{group.items.length}</span>
+              </div>
+              {group.items.map((item) => {
+                const excerpt = excerptOf(item)
+                const kind = sourceKind(item)
+                return (
+                  <Link
+                    key={item.id}
+                    to={`/items/${item.id}`}
+                    className={`item-card ${item.summary ? '' : 'pending'}`}
+                  >
+                    <span className={`item-dot dot-${kind}`}></span>
+                    <div className="item-meta">
+                      <SourceGlyph kind={kind} />
+                      <span className="date-full">
+                        {SOURCE_LABEL[kind]} - {relativeDate(item.updated_at)}
                       </span>
-                    ))}
-                  </div>
-                )}
-              </Link>
-            )
-          })}
+                      <span className="date-short">{formatShortDate(item.updated_at)}</span>
+                      {!item.summary && <span className="item-state">요약 전</span>}
+                    </div>
+                    <h2 className="item-title">{item.title}</h2>
+                    {excerpt && <p className="item-excerpt">{excerpt}</p>}
+                    {item.tags.length > 0 && (
+                      <div className="item-tags">
+                        {item.tags.map((t) => (
+                          <span key={t} className="tag">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </Link>
+                )
+              })}
+            </Fragment>
+          ))}
         </div>
       )}
 
@@ -164,14 +173,24 @@ function SourceGlyph({ kind }) {
   return <IconNote {...props} />
 }
 
-/** "오늘 - 어제 - N일 전 - 지난주"; anything older reads as a plain date. */
+/** "오늘 - 어제 - N일 전 - 지난주"; anything older reads as a plain date.
+    Derived from dateBucket so it can never disagree with the group headers. */
 function relativeDate(iso) {
-  const days = daysSince(iso)
-  if (days <= 0) return '오늘'
-  if (days === 1) return '어제'
-  if (days < 7) return `${days}일 전`
-  if (days < 14) return '지난주'
-  return formatDate(iso)
+  const bucket = dateBucket(iso)
+  if (bucket === '이번 주') return `${daysSince(iso)}일 전`
+  if (bucket === '이전') return formatDate(iso)
+  return bucket
+}
+
+function groupByDate(items) {
+  const groups = []
+  for (const item of items) {
+    const label = dateBucket(item.updated_at)
+    const last = groups[groups.length - 1]
+    if (last && last.label === label) last.items.push(item)
+    else groups.push({ label, items: [item] })
+  }
+  return groups
 }
 
 function formatDate(iso) {
@@ -181,8 +200,8 @@ function formatDate(iso) {
   ).padStart(2, '0')}.`
 }
 
-/** The index theme shows the date in a narrow gutter, so it needs a short form. */
+/** The index ledger's date column - zero-padded so the digits line up. */
 function formatShortDate(iso) {
   const d = new Date(iso)
-  return `${d.getMonth() + 1}.${d.getDate()}`
+  return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 }
