@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { excerptOf, store } from '../store'
 import ThemeSheet from '../components/ThemeSheet.jsx'
 import { applyTheme, getTheme } from '../theme'
-import { IconLink, IconNote, IconPalette, IconSearch, IconVideo } from '../icons'
+import { ArtEmptyArchive, IconLink, IconNote, IconPalette, IconSearch, IconVideo } from '../icons'
 import { isVideoSource } from '../ai'
 import { dateBucket, daysSince } from '../dates'
 
@@ -99,7 +99,9 @@ export default function ArchiveList() {
         </p>
       ) : items.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">🗂️</div>
+          <div className="empty-state-icon">
+            <ArtEmptyArchive />
+          </div>
           <p>{q || activeTag ? '조건에 맞는 지식이 없어요.' : '아직 저장된 지식이 없어요.'}</p>
           {!q && !activeTag && (
             <Link to="/add">

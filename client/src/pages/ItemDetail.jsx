@@ -35,9 +35,10 @@ export default function ItemDetail() {
   const [cardsCopied, setCardsCopied] = useState(false)
   const [savingCards, setSavingCards] = useState(false)
   const [aiBusy, setAiBusy] = useState(false)
-  const [aiError, setAiError] = useState('')
+  // { text, kind } - a busy Google is a wait, not a failure, and reads that way.
+  const [aiError, setAiError] = useState(null)
   const [cardsBusy, setCardsBusy] = useState(false)
-  const [cardsError, setCardsError] = useState('')
+  const [cardsError, setCardsError] = useState(null)
   const [elapsed, setElapsed] = useState(0)
   const location = useLocation()
 
@@ -78,7 +79,7 @@ export default function ItemDetail() {
 
   async function runAutoSummary(current) {
     setAiBusy(true)
-    setAiError('')
+    setAiError(null)
     try {
       const summary = await summarizeItem(current)
       const merged = [...current.tags, ...extractTagsFromSummary(summary)]
@@ -86,7 +87,7 @@ export default function ItemDetail() {
       setItem(updated)
       setTagsInput(updated.tags.join(', '))
     } catch (err) {
-      setAiError(err.message)
+      setAiError({ text: err.message, kind: err.kind || 'error' })
     } finally {
       setAiBusy(false)
     }
@@ -94,7 +95,7 @@ export default function ItemDetail() {
 
   async function runAutoCards() {
     setCardsBusy(true)
-    setCardsError('')
+    setCardsError(null)
     try {
       const answer = await makeCardsForItem(item)
       const pairs = parseCards(answer)
@@ -103,7 +104,7 @@ export default function ItemDetail() {
       const list = await cardStore.forItem(id)
       setCardCount(list.length)
     } catch (err) {
-      setCardsError(err.message)
+      setCardsError({ text: err.message, kind: err.kind || 'error' })
     } finally {
       setCardsBusy(false)
     }
@@ -367,7 +368,12 @@ export default function ItemDetail() {
             </div>
           )}
           {aiError && !aiBusy && (
-            <p className="hint" style={{ color: 'var(--danger)', marginBottom: 12 }}>{aiError}</p>
+            <p
+              className={`test-result ${aiError.kind === 'busy' ? 'busy' : 'bad'}`}
+              style={{ margin: '0 0 12px' }}
+            >
+              {aiError.text}
+            </p>
           )}
 
           {/* Once a summary exists, redoing it is no longer the main move -
@@ -469,7 +475,12 @@ export default function ItemDetail() {
             <p className="hint" style={{ marginBottom: 12 }}>AI가 문답 카드를 만드는 중이에요...</p>
           )}
           {cardsError && !cardsBusy && (
-            <p className="hint" style={{ color: 'var(--danger)', marginBottom: 12 }}>{cardsError}</p>
+            <p
+              className={`test-result ${cardsError.kind === 'busy' ? 'busy' : 'bad'}`}
+              style={{ margin: '0 0 12px' }}
+            >
+              {cardsError.text}
+            </p>
           )}
           {/* The next-step panel above already offers this as the one blue
               button, so down here it steps aside rather than competing. */}

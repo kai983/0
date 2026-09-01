@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { cards as cardStore, schedule } from '../cards'
 import { store } from '../store'
+import { ArtNoCards, ArtSessionDone } from '../icons'
 
 const GRADES = [
   { id: 'again', label: '다시' },
@@ -74,7 +75,9 @@ export default function Review() {
           <span className="list-count">{total}장</span>
         </div>
         <div className="empty-state">
-          <div className="empty-state-icon">{done > 0 ? '🎉' : '🗂️'}</div>
+          <div className="empty-state-icon">
+            {done > 0 ? <ArtSessionDone /> : <ArtNoCards />}
+          </div>
           {done > 0 ? (
             <p>오늘 몫 {done}장을 모두 마쳤어요.</p>
           ) : total === 0 ? (

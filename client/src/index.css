@@ -932,8 +932,17 @@ a {
 }
 
 .empty-state-icon {
-  font-size: 2.4rem;
-  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+  color: var(--text-faint);
+}
+
+/* One element in each drawing carries the accent - the bookmark, the front
+   card, the check - while everything around it stays quiet. */
+.empty-state-icon .art-accent {
+  stroke: var(--accent);
+  opacity: 0.85;
 }
 
 .empty-state p {

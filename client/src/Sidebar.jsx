@@ -19,7 +19,9 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <span className="sidebar-logo">📚</span>
+        <span className="sidebar-logo">
+          <IconArchive width={20} height={20} />
+        </span>
         <div>
           <div className="sidebar-title">지식 저장소</div>
           <div className="sidebar-subtitle">{count}개 저장됨</div>

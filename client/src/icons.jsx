@@ -164,3 +164,57 @@ export function IconImport(props) {
     </svg>
   )
 }
+
+/**
+ * Empty-state illustrations. Emoji were doing this job, which meant someone
+ * else's art at someone else's scale in the middle of our own icon set - the
+ * one place in the app where the drawing was borrowed. These sit on a 48px
+ * grid with a 1.5px stroke: lighter than the 24/2 UI icons, so they read as
+ * illustration rather than as a control you can press.
+ */
+const art = {
+  width: 56,
+  height: 56,
+  viewBox: '0 0 48 48',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.5,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+}
+
+/** Nothing saved yet - the app's own bookmark, waiting in an empty slot. */
+export function ArtEmptyArchive(props) {
+  return (
+    <svg {...art} {...props}>
+      <rect x="12" y="7" width="24" height="30" rx="3" strokeDasharray="3 4" opacity="0.45" />
+      <path
+        className="art-accent"
+        d="M19 14h10a1.5 1.5 0 0 1 1.5 1.5v14.2a.8.8 0 0 1-1.2.7L24 26.9l-5.3 3.5a.8.8 0 0 1-1.2-.7V15.5A1.5 1.5 0 0 1 19 14z"
+      />
+    </svg>
+  )
+}
+
+/** No learning cards yet - a stack waiting to be written. */
+export function ArtNoCards(props) {
+  return (
+    <svg {...art} {...props}>
+      <rect x="21" y="7" width="19" height="27" rx="3" opacity="0.4" transform="rotate(9 30 20)" />
+      <rect className="art-accent" x="8" y="12" width="23" height="30" rx="3.5" />
+      <path d="M13.5 22h12M13.5 28.5h7.5" opacity="0.5" />
+    </svg>
+  )
+}
+
+/** Session cleared - a check, with two small marks for the small victory. */
+export function ArtSessionDone(props) {
+  return (
+    <svg {...art} {...props}>
+      <circle cx="23" cy="25" r="13" opacity="0.4" />
+      <path className="art-accent" d="M17 25.4l4.3 4.3L29.5 20" strokeWidth="2" />
+      <path d="M38 10v4.5M35.8 12.2h4.4" opacity="0.6" />
+      <path d="M9.5 13v3M8 14.5h3" opacity="0.4" />
+    </svg>
+  )
+}

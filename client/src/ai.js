@@ -2,10 +2,59 @@ import { Capacitor, CapacitorHttp } from '@capacitor/core'
 import { buildCardsPrompt, buildSummaryPrompt } from './promptTemplate'
 
 const KEY_STORAGE = 'knowledge-archive:gemini-key:v1'
-// An alias rather than a pinned version: gemini-2.5-flash was retired for new
-// accounts mid-project, and this tracks whatever the current flash model is.
-const MODEL = 'gemini-flash-latest'
-const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
+const MODEL_STORAGE = 'knowledge-archive:gemini-model:v1'
+
+// Free models go down one at a time - measured, not assumed: while
+// gemini-flash-latest answered every request with "high demand", the other two
+// answered normally in the same minute. So the app carries a list and moves to
+// the next one rather than reporting a busy model as a dead end. The alias
+// leads because it follows Google's current flash model.
+const MODELS = ['gemini-flash-latest', 'gemini-2.5-flash', 'gemini-flash-lite-latest']
+
+const endpointFor = (model) =>
+  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
+
+/** The model that last answered, tried first so a working one stays working. */
+function preferredModel() {
+  try {
+    const saved = localStorage.getItem(MODEL_STORAGE)
+    return MODELS.includes(saved) ? saved : ''
+  } catch {
+    return ''
+  }
+}
+
+function rememberModel(model) {
+  try {
+    if (model === MODELS[0]) localStorage.removeItem(MODEL_STORAGE)
+    else localStorage.setItem(MODEL_STORAGE, model)
+  } catch {
+    // Best effort - without storage every request just starts from the top.
+  }
+}
+
+/** Every model, starting with the one that worked last time. */
+function modelOrder() {
+  const first = preferredModel()
+  return first ? [first, ...MODELS.filter((m) => m !== first)] : [...MODELS]
+}
+
+/** Google is out of capacity for this model, or retired it - try another. */
+function modelUnavailable(status, data) {
+  if (status === 503) return true
+  return status === 404 && /model/i.test(data?.error?.message || '')
+}
+
+const wait = (ms) => new Promise((done) => setTimeout(done, ms))
+
+/** An error the UI can tell apart: waiting on Google is not a broken app. */
+export class AiError extends Error {
+  constructor(message, kind = 'error') {
+    super(message)
+    this.name = 'AiError'
+    this.kind = kind
+  }
+}
 
 // Baked in at build time from the GEMINI_KEY secret (empty in dev builds),
 // so the app works out of the box. A key entered in settings overrides it.
@@ -66,12 +115,12 @@ export function isVideoSource(url) {
  * CapacitorHttp normally serializes a plain object itself, but when it gets
  * that wrong the API rejects the payload, so the caller can retry pre-encoded.
  */
-async function post(body, asText, timeoutMs) {
+async function post(model, body, asText, timeoutMs) {
   const key = aiKey.get()
   // The key travels as a query parameter as well as a header. Either alone is
   // enough for Google, and a native HTTP layer that drops custom headers would
   // otherwise look exactly like a rejected key.
-  const url = `${ENDPOINT}?key=${encodeURIComponent(key)}`
+  const url = `${endpointFor(model)}?key=${encodeURIComponent(key)}`
   const headers = { 'Content-Type': 'application/json', 'x-goog-api-key': key }
 
   if (Capacitor.isNativePlatform()) {
@@ -115,13 +164,14 @@ function isPayloadError(status, data) {
   return status === 400 && /invalid json payload|root element|cannot bind/i.test(data?.error?.message || '')
 }
 
-async function request(body, timeoutMs = TEXT_TIMEOUT) {
+/** One request to one model, with the payload retry native builds need. */
+async function requestModel(model, body, timeoutMs) {
   let result
   try {
-    result = await post(body, false, timeoutMs)
+    result = await post(model, body, false, timeoutMs)
   } catch (err) {
     if (err.name === 'AbortError' || /timeout|timed out/i.test(err.message || '')) {
-      throw new Error('시간이 너무 오래 걸려서 멈췄어요. 다시 시도해 주세요.')
+      throw new AiError('시간이 너무 오래 걸려서 멈췄어요. 다시 시도해 주세요.')
     }
     throw err
   }
@@ -129,10 +179,31 @@ async function request(body, timeoutMs = TEXT_TIMEOUT) {
   // A mis-serialized body and a bad key both come back as 400, so retry the
   // one case we can fix ourselves before blaming the key.
   if (Capacitor.isNativePlatform() && isPayloadError(result.status, result.data)) {
-    result = await post(body, true, timeoutMs)
+    result = await post(model, body, true, timeoutMs)
   }
 
   return result
+}
+
+/**
+ * Walks the model list until one answers. A busy or retired model is skipped
+ * immediately; only when every model is busy does it wait and go round once
+ * more, because that is the one case where waiting can actually help.
+ */
+async function request(body, timeoutMs = TEXT_TIMEOUT) {
+  let last
+  for (let pass = 0; pass < 2; pass++) {
+    if (pass > 0) await wait(2000)
+    for (const model of modelOrder()) {
+      const result = await requestModel(model, body, timeoutMs)
+      last = result
+      if (!modelUnavailable(result.status, result.data)) {
+        if (result.status >= 200 && result.status < 300) rememberModel(model)
+        return result
+      }
+    }
+  }
+  return last
 }
 
 async function generate(parts, tools, timeoutMs) {
@@ -148,15 +219,21 @@ async function generate(parts, tools, timeoutMs) {
   const { status, data } = await request(body, timeoutMs)
   const message = data?.error?.message || ''
 
-  if (status === 429) throw new Error('무료 한도에 걸렸어요. 1분쯤 뒤에 다시 시도해 주세요.')
-  if (status === 503) throw new Error('지금 이용자가 몰려 있어요. 잠시 뒤에 다시 시도해 주세요.')
+  if (status === 429) {
+    throw new AiError('무료 한도에 걸렸어요. 1분쯤 뒤에 다시 시도해 주세요.', 'busy')
+  }
+  if (status === 503) {
+    // Every model was busy, twice over - nothing here is broken, so this reads
+    // as a wait rather than a failure.
+    throw new AiError('구글 무료 모델이 지금 전부 혼잡해요. 잠시 뒤 다시 눌러 주세요.', 'busy')
+  }
   if (status === 401 || status === 403 || /api key not valid|api_key_invalid/i.test(message)) {
-    throw new Error(`API 키 문제예요. 설정에서 키를 다시 넣어 주세요. (${message || status})`)
+    throw new AiError(`API 키 문제예요. 설정에서 키를 다시 넣어 주세요. (${message || status})`)
   }
   if (status < 200 || status >= 300) {
     // Anything else - a malformed request, a retired model, a blocked region -
     // reports what Google actually said rather than guessing at the cause.
-    throw new Error(`요청이 실패했어요 (${status}) ${message}`.trim())
+    throw new AiError(`요청이 실패했어요 (${status}) ${message}`.trim())
   }
 
   const text = (data?.candidates?.[0]?.content?.parts || [])
@@ -164,7 +241,7 @@ async function generate(parts, tools, timeoutMs) {
     .map((p) => p.text || '')
     .join('')
     .trim()
-  if (!text) throw new Error('빈 답변이 왔어요. 다시 시도해 주세요.')
+  if (!text) throw new AiError('빈 답변이 왔어요. 다시 시도해 주세요.')
   return text
 }
 
@@ -173,21 +250,19 @@ async function generate(parts, tools, timeoutMs) {
  * exactly what went wrong when it doesn't.
  */
 export async function testAiConnection() {
-  const probe = () => request({ contents: [{ parts: [{ text: '안녕' }] }] })
   try {
-    let { status, data } = await probe()
-
-    // 503 means Google's side is busy, not that anything here is wrong. It
-    // clears on its own, so try once more before saying anything about it.
-    if (status === 503) ({ status, data } = await probe())
+    // request() already walks every model twice, so anything still busy here
+    // means Google has no free capacity at all right now.
+    const { status, data } = await request({ contents: [{ parts: [{ text: '안녕' }] }] })
 
     if (status >= 200 && status < 300) {
-      return { state: 'ok', text: '연결 성공 - 자동 요약을 쓸 수 있어요.' }
+      const model = preferredModel() || MODELS[0]
+      return { state: 'ok', text: `연결 성공 - 자동 요약을 쓸 수 있어요. (${model})` }
     }
     if (status === 503) {
       return {
         state: 'busy',
-        text: '지금 구글 쪽에 이용자가 몰려 있어요. 키와 연결은 정상이니 잠시 뒤 다시 해보세요.',
+        text: '구글 무료 모델이 지금 전부 혼잡해요. 키와 연결은 정상이니 잠시 뒤 다시 해보세요.',
       }
     }
     if (status === 429) {
