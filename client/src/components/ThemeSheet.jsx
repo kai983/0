@@ -5,6 +5,12 @@ import { exportBackup, importBackup, lastBackupAt, parseBackup } from '../backup
 import { shareDiagnostic } from '../sharing'
 import { IconCheck } from '../icons'
 
+/** Enough of a key to recognise it, without putting the whole secret on screen. */
+function maskKey(value) {
+  if (value.length <= 14) return value
+  return `${value.slice(0, 8)}…${value.slice(-4)}`
+}
+
 function backupAgeText(iso) {
   if (!iso) return '아직 백업한 적이 없어요.'
   const days = Math.floor((Date.now() - new Date(iso)) / 86400000)
@@ -15,16 +21,26 @@ function backupAgeText(iso) {
 
 /** Bottom sheet with the theme picker, the AI settings and backup. */
 export default function ThemeSheet({ current, onPick, onClose }) {
-  const [key, setKey] = useState(aiKey.stored())
+  // The saved key is shown above, masked, so this field starts empty and only
+  // ever holds a replacement the user is typing.
+  const [key, setKey] = useState('')
   const [savedTick, setSavedTick] = useState(false)
   const [testing, setTesting] = useState(false)
   const [result, setResult] = useState(null)
   const [backupBusy, setBackupBusy] = useState(false)
   const [backupResult, setBackupResult] = useState(null)
   const [lastBackup, setLastBackup] = useState(lastBackupAt)
-  const [usingOwnKey, setUsingOwnKey] = useState(() => Boolean(aiKey.stored()))
+  const [savedKey, setSavedKey] = useState(() => aiKey.stored())
   const [shareInfo] = useState(shareDiagnostic)
   const fileInput = useRef(null)
+  const usingOwnKey = Boolean(savedKey)
+
+  function clearKey() {
+    aiKey.set('')
+    setSavedKey('')
+    setKey('')
+    setResult(null)
+  }
 
   async function runExport() {
     setBackupBusy(true)
@@ -61,7 +77,8 @@ export default function ThemeSheet({ current, onPick, onClose }) {
 
   function saveKey() {
     aiKey.set(key)
-    setUsingOwnKey(Boolean(aiKey.stored()))
+    setSavedKey(aiKey.stored())
+    setKey('')
     setSavedTick(true)
     setResult(null)
     setTimeout(() => setSavedTick(false), 1500)
@@ -71,8 +88,11 @@ export default function ThemeSheet({ current, onPick, onClose }) {
     setTesting(true)
     setResult(null)
     // Save first, so the test uses the key that is on screen.
-    aiKey.set(key)
-    setUsingOwnKey(Boolean(aiKey.stored()))
+    if (key) {
+      aiKey.set(key)
+      setSavedKey(aiKey.stored())
+      setKey('')
+    }
     setResult(await testAiConnection())
     setTesting(false)
   }
@@ -111,12 +131,27 @@ export default function ThemeSheet({ current, onPick, onClose }) {
         </h2>
         {/* An empty input reads as "no key set", which is the opposite of the
             truth when the built-in key is doing the work - so say which. */}
-        <p className="key-status">
+        <div className="key-status">
           <IconCheck width={15} height={15} />
-          {usingOwnKey ? '직접 넣은 키를 쓰는 중' : '내장된 무료 키를 쓰는 중 - 설정할 것 없어요'}
-        </p>
+          <span>
+            {usingOwnKey ? (
+              <>
+                직접 넣은 키를 쓰는 중 - <code>{maskKey(savedKey)}</code>
+              </>
+            ) : (
+              '내장된 무료 키를 쓰는 중 - 설정할 것 없어요'
+            )}
+          </span>
+          {usingOwnKey && (
+            <button className="key-clear" onClick={clearKey}>
+              지우기
+            </button>
+          )}
+        </div>
         <p className="sheet-sub">
-          다른 키로 바꾸고 싶을 때만 아래에 붙여넣으세요. 키는 이 폰에만 저장됩니다.
+          {usingOwnKey
+            ? '지우면 내장된 무료 키로 돌아갑니다. 다른 키로 바꾸려면 아래에 붙여넣으세요.'
+            : '다른 키로 바꾸고 싶을 때만 아래에 붙여넣으세요. 키는 이 폰에만 저장됩니다.'}
         </p>
         <a
           href="https://aistudio.google.com/apikey"
@@ -131,7 +166,7 @@ export default function ThemeSheet({ current, onPick, onClose }) {
             type="text"
             value={key}
             onChange={(e) => setKey(e.target.value)}
-            placeholder="바꿀 키 붙여넣기 (선택)"
+            placeholder={usingOwnKey ? '다른 키로 바꾸기 (선택)' : '바꿀 키 붙여넣기 (선택)'}
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck="false"
@@ -144,9 +179,7 @@ export default function ThemeSheet({ current, onPick, onClose }) {
         <button className="block quiet" style={{ marginTop: 8 }} onClick={runTest} disabled={testing}>
           {testing ? '확인 중...' : '연결 테스트'}
         </button>
-        {result && (
-          <p className={`test-result ${result.ok ? 'ok' : 'bad'}`}>{result.text}</p>
-        )}
+        {result && <p className={`test-result ${result.state}`}>{result.text}</p>}
 
         <h2 className="sheet-title" style={{ marginTop: 24 }}>
           백업

@@ -173,12 +173,29 @@ async function generate(parts, tools, timeoutMs) {
  * exactly what went wrong when it doesn't.
  */
 export async function testAiConnection() {
+  const probe = () => request({ contents: [{ parts: [{ text: '안녕' }] }] })
   try {
-    const { status, data } = await request({ contents: [{ parts: [{ text: '안녕' }] }] })
-    if (status >= 200 && status < 300) return { ok: true, text: '연결 성공 - 자동 요약을 쓸 수 있어요.' }
-    return { ok: false, text: `실패 (${status}) ${data?.error?.message || ''}`.trim() }
+    let { status, data } = await probe()
+
+    // 503 means Google's side is busy, not that anything here is wrong. It
+    // clears on its own, so try once more before saying anything about it.
+    if (status === 503) ({ status, data } = await probe())
+
+    if (status >= 200 && status < 300) {
+      return { state: 'ok', text: '연결 성공 - 자동 요약을 쓸 수 있어요.' }
+    }
+    if (status === 503) {
+      return {
+        state: 'busy',
+        text: '지금 구글 쪽에 이용자가 몰려 있어요. 키와 연결은 정상이니 잠시 뒤 다시 해보세요.',
+      }
+    }
+    if (status === 429) {
+      return { state: 'busy', text: '오늘 무료 한도를 다 썼어요. 내일 다시 쓸 수 있어요.' }
+    }
+    return { state: 'bad', text: `실패 (${status}) ${data?.error?.message || ''}`.trim() }
   } catch (err) {
-    return { ok: false, text: `연결 안 됨 - ${err.message}` }
+    return { state: 'bad', text: `연결 안 됨 - ${err.message}` }
   }
 }
 
