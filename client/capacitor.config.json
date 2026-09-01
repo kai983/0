@@ -1,6 +1,6 @@
 {
   "appId": "kr.fanding.knowledgearchive",
-  "appName": "지식 아카이브",
+  "appName": "지식 저장소",
   "webDir": "dist",
   "backgroundColor": "#fbfaf8",
   "plugins": {

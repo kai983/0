@@ -6,7 +6,7 @@ export function buildSummaryPrompt({ title, sourceType, sourceUrl, rawContent })
 
   const content = (rawContent || '').trim();
 
-  return `다음 콘텐츠를 개인 지식 아카이브용으로 재가공해줘.
+  return `다음 콘텐츠를 개인 지식 저장소용으로 재가공해줘.
 
 제목: ${title}
 ${sourceLine}

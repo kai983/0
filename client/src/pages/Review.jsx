@@ -77,7 +77,7 @@ export default function Review() {
           )}
           {total === 0 && (
             <Link to="/">
-              <button>아카이브로 가기</button>
+              <button>저장소로 가기</button>
             </Link>
           )}
         </div>

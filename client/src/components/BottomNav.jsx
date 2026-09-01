@@ -21,7 +21,7 @@ export default function BottomNav() {
     <nav className="bottom-nav">
       <NavLink to="/" end className="bottom-nav-item">
         <IconArchive width={20} height={20} />
-        <span>아카이브</span>
+        <span>저장소</span>
       </NavLink>
       <NavLink to="/review" className="bottom-nav-item">
         <span className="nav-icon-wrap">

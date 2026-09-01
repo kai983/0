@@ -21,7 +21,7 @@ export default function Sidebar() {
       <div className="sidebar-brand">
         <span className="sidebar-logo">📚</span>
         <div>
-          <div className="sidebar-title">지식 아카이브</div>
+          <div className="sidebar-title">지식 저장소</div>
           <div className="sidebar-subtitle">{count}개 저장됨</div>
         </div>
       </div>
@@ -29,7 +29,7 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         <NavLink to="/" end className="sidebar-link">
           <IconArchive />
-          아카이브
+          저장소
         </NavLink>
         <NavLink to="/add" className="sidebar-link">
           <IconPlus />

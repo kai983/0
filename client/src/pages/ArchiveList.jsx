@@ -52,7 +52,7 @@ export default function ArchiveList() {
   return (
     <div className="page page-top">
       <div className="list-head">
-        <h1 className="list-title">아카이브</h1>
+        <h1 className="list-title">저장소</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <span className="list-count">{total}개</span>
           <button className="appbar-icon-btn" onClick={() => setSheetOpen(true)} aria-label="테마 바꾸기">

@@ -6,7 +6,6 @@ on:
       - claude/build-app-l9noeq
     paths:
       - 'client/**'
-  workflow_dispatch: {}
       - '.github/workflows/build-apk.yml'
   workflow_dispatch: {}
 
