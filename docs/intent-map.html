@@ -4,6 +4,7 @@
   :root {
     --paper: #fbfbfc;
     --panel: #ffffff;
+    --sunk: #f4f5f8;
     --ink: #16181c;
     --muted: #5f6672;
     --faint: #98a0ac;
@@ -23,6 +24,7 @@
     :root:not([data-theme='light']) {
       --paper: #101216;
       --panel: #171a20;
+      --sunk: #14171d;
       --ink: #e9ecf2;
       --muted: #9aa3b1;
       --faint: #6b7383;
@@ -40,6 +42,7 @@
   :root[data-theme='dark'] {
     --paper: #101216;
     --panel: #171a20;
+    --sunk: #14171d;
     --ink: #e9ecf2;
     --muted: #9aa3b1;
     --faint: #6b7383;
@@ -67,7 +70,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  .doc { max-width: 780px; margin: 0 auto; padding: 56px 24px 96px; }
+  .doc { max-width: 800px; margin: 0 auto; padding: 56px 24px 96px; }
 
   .kicker {
     margin: 0;
@@ -92,7 +95,6 @@
     font-family: var(--serif);
     font-size: clamp(18px, 4.2vw, 21px);
     line-height: 1.85;
-    color: var(--ink);
   }
 
   .meta {
@@ -111,7 +113,7 @@
     display: flex;
     align-items: baseline;
     gap: 12px;
-    margin: 62px 0 4px;
+    margin: 68px 0 6px;
     font-family: var(--serif);
     font-size: 25px;
     font-weight: 700;
@@ -126,18 +128,9 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .lede { margin: 0 0 22px; color: var(--muted); font-size: 14.5px; }
-
-  h3 {
-    margin: 30px 0 8px;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-
+  .lede { margin: 0 0 24px; color: var(--muted); font-size: 14.5px; }
   p { margin: 0 0 14px; }
 
-  /* Their words, kept verbatim - the evidence every reading rests on. */
   .said {
     margin: 0 0 18px;
     padding: 2px 0 2px 18px;
@@ -145,7 +138,6 @@
     font-family: var(--serif);
     font-size: 16.5px;
     line-height: 1.8;
-    color: var(--ink);
   }
   .said small {
     display: block;
@@ -153,50 +145,119 @@
     font-family: var(--sans);
     font-size: 12px;
     color: var(--faint);
-    letter-spacing: 0.02em;
   }
 
-  .layer {
+  /* ---- 기둥 ---- */
+  .pillar {
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 16px;
     background: var(--panel);
-    padding: 22px 22px 8px;
-    margin-bottom: 14px;
+    padding: 26px 24px 12px;
+    margin-bottom: 20px;
   }
-  .layer-head {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-  .layer-head h3 { margin: 0; }
-  .layer-tag {
+  .pillar-top { display: flex; gap: 14px; align-items: flex-start; }
+  .pillar-num {
     flex-shrink: 0;
-    padding: 2px 8px;
-    border-radius: 6px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
     background: var(--accent-tint);
     color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .pillar-name {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .pillar-def { margin: 6px 0 0; color: var(--muted); font-size: 14.5px; }
+
+  .verdict {
+    margin: 18px 0 8px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--accent-tint);
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.7;
+  }
+  .verdict span {
+    display: block;
+    margin-bottom: 3px;
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.1em;
+    color: var(--accent);
   }
-  .layer p { color: var(--muted); }
 
-  ul { margin: 0 0 16px; padding: 0; list-style: none; }
-  li {
-    position: relative;
-    margin-bottom: 9px;
-    padding-left: 15px;
+  /* ---- 가지 / 잔가지 ---- */
+  .branch { margin-top: 24px; padding-left: 16px; border-left: 2px solid var(--line); }
+  .branch-head {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    margin-bottom: 8px;
   }
-  li::before {
-    content: '-';
+  .branch-id {
+    flex-shrink: 0;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .branch-head h4 { margin: 0; font-size: 15.5px; font-weight: 700; }
+
+  .twigs { margin: 0; padding: 0; list-style: none; }
+  .twigs li {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 5px 0 5px 14px;
+    font-size: 14.5px;
+    color: var(--muted);
+  }
+  .twigs li::before {
+    content: '';
     position: absolute;
     left: 0;
-    color: var(--accent);
-    font-weight: 700;
+    top: 15px;
+    width: 6px;
+    height: 1px;
+    background: var(--faint);
   }
-  li b { font-weight: 700; }
+  .twigs li > span { flex: 1; min-width: 0; }
+  .twigs b { color: var(--ink); font-weight: 600; }
+  .v {
+    flex-shrink: 0;
+    padding: 1px 7px;
+    border-radius: 5px;
+    background: var(--sunk);
+    color: var(--faint);
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .v.open { background: var(--warn-tint); color: var(--warn); }
 
+  /* ---- 도해 ---- */
+  figure { margin: 8px 0 26px; }
+  figure svg { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; }
+  figcaption {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ---- 표 ---- */
   .table-wrap { overflow-x: auto; margin: 0 0 18px; }
   table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 14px; }
   th {
@@ -215,9 +276,7 @@
     vertical-align: top;
     color: var(--muted);
   }
-  td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
-  td b { color: var(--ink); }
-
+  td:first-child { color: var(--ink); font-weight: 600; }
   .pill {
     display: inline-block;
     padding: 2px 9px;
@@ -229,35 +288,48 @@
   .pill.done { background: var(--ok-tint); color: var(--ok); }
   .pill.open { background: var(--warn-tint); color: var(--warn); }
 
-  .rule {
+  /* ---- 법 ---- */
+  .law {
     display: flex;
     gap: 14px;
-    padding: 16px 0;
+    padding: 15px 0;
     border-bottom: 1px solid var(--line-soft);
   }
-  .rule:last-child { border-bottom: none; }
-  .rule-mark {
+  .law:last-child { border-bottom: none; }
+  .law-mark {
     flex-shrink: 0;
-    width: 30px;
+    width: 34px;
     font-family: var(--serif);
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--accent);
-    line-height: 1.4;
+    line-height: 1.5;
+    text-align: center;
   }
-  .rule-body { min-width: 0; }
-  .rule-body b { display: block; font-size: 15.5px; }
-  .rule-body span { display: block; color: var(--muted); font-size: 14px; }
+  .law-body { min-width: 0; }
+  .law-body b { display: block; font-size: 15.5px; }
+  .law-body span { display: block; color: var(--muted); font-size: 14px; }
+
+  ul.plain { margin: 0 0 16px; padding: 0; list-style: none; }
+  ul.plain li { position: relative; margin-bottom: 10px; padding-left: 15px; }
+  ul.plain li::before {
+    content: '-';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
 
   .note {
-    margin: 22px 0;
-    padding: 18px 20px;
-    border-radius: 12px;
-    background: var(--accent-tint);
-    color: var(--ink);
+    margin: 24px 0;
+    padding: 20px 22px;
+    border-radius: 14px;
+    background: var(--warn-tint);
     font-size: 14.5px;
   }
-  .note b { display: block; margin-bottom: 5px; }
+  .note b { display: block; margin-bottom: 8px; color: var(--warn); }
+  .note ol { margin: 0; padding-left: 18px; }
+  .note li { margin-bottom: 6px; }
 
   a { color: var(--accent); }
   a:hover { color: var(--ink); }
@@ -272,7 +344,8 @@
 
   @media (max-width: 520px) {
     .doc { padding: 40px 18px 72px; }
-    .layer { padding: 18px 16px 6px; }
+    .pillar { padding: 20px 16px 8px; }
+    .branch { padding-left: 12px; }
   }
 </style>
 
@@ -280,179 +353,396 @@
   <p class="kicker">INTENT MAP - v1.4 기준</p>
   <h1>지식 저장소 의도 지도</h1>
   <p class="thesis">
-    이 대화 전체에서 요구를 뽑아 네 겹으로 나눈 것. 무엇을 만들었는지가 아니라,
-    <strong>무엇을 원했는지</strong>의 기록이다. 다음 작업은 이 문서에서 시작하면 된다.
+    대화 전체의 요구를 <strong>뿌리 하나, 기둥 넷, 가지 열여섯, 잔가지 쉰여섯</strong>으로 세운 것.
+    무엇을 만들었는지가 아니라 <strong>무엇을 원했고 그래서 무엇을 거절해야 하는지</strong>의 기록이다.
   </p>
   <div class="meta">
     <span><b>기준</b> v1.4</span>
     <span><b>정리일</b> 2026-09-01</span>
     <span><b>기기</b> Galaxy S23 Ultra</span>
-    <span><b>범위</b> v0.1 - v1.4 (40 커밋)</span>
+    <span><b>범위</b> v0.1 - v1.4 (41 커밋)</span>
   </div>
 
-  <h2><span class="n">01</span>뿌리 - 왜 만드는가</h2>
-  <p class="lede">한 번만 말했지만 모든 결정의 기준이 된 문장.</p>
+  <h2><span class="n">00</span>뿌리</h2>
+  <p class="lede">한 번 말했고, 이후 모든 결정이 여기서 갈라져 나왔다.</p>
   <p class="said">
     "지식이 내 뇌에 다 못 들어가니, 잘 쌓아두고 내가 언제든 가장 편한 형태로 꺼내 쓸 수 있는 앱.
     거기에 플러스 학습도 가능"
     <small>첫 요구 정의</small>
   </p>
   <p>
-    여기서 세 동사가 나온다 - <b>쌓는다</b>, <b>꺼낸다</b>, <b>남긴다</b>. 앱의 세 탭이 정확히 이 순서다.
-    그리고 "가장 편한 형태"라는 말이 이후 모든 디자인 요구의 뿌리였다. 기능이 되는 것과
-    편한 것은 다르고, 이 프로젝트에서 후자를 요구한 횟수가 훨씬 많았다.
+    동사 셋이 나온다 - <b>쌓는다 / 꺼낸다 / 남긴다</b>. 앱의 세 탭이 정확히 이 순서다.
+    그리고 "가장 편한 형태"라는 다섯 글자가 이후 디자인 요구 전부의 출처였다.
+    되는 것과 편한 것은 다르고, 이 프로젝트에서 후자를 요구한 횟수가 세 배 많았다.
   </p>
 
-  <h2><span class="n">02</span>네 겹 - 무엇을 원했는가</h2>
-  <p class="lede">표면 요구에서 밑에 깔린 기준까지, 아래로 갈수록 말수는 적고 힘은 세다.</p>
+  <h2><span class="n">01</span>네 기둥이 만드는 관문</h2>
+  <p class="lede">새 요구가 들어왔을 때 통과해야 하는 순서. 위에서 걸리면 아래는 볼 필요가 없다.</p>
 
-  <div class="layer">
-    <div class="layer-head">
-      <span class="layer-tag">1겹</span>
-      <h3>마찰 0 - 내가 안 만져도 되게</h3>
+  <figure>
+    <svg viewBox="0 0 380 470" role="img" aria-label="새 요구가 마찰 0, 0원, 때깔, 신뢰 네 관문을 차례로 통과해야 배포에 이르는 흐름도. 각 관문에서 걸리면 왼쪽으로 되돌아간다.">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+        </marker>
+        <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
+        </marker>
+      </defs>
+
+      <rect x="128" y="8" width="180" height="30" rx="15" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1.2"/>
+      <text x="218" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent)">새 요구</text>
+
+      <g stroke="var(--accent)" stroke-width="1.6" fill="none" color="var(--accent)">
+        <line x1="218" y1="38" x2="218" y2="62" marker-end="url(#ar-a)"/>
+        <line x1="218" y1="116" x2="218" y2="142" marker-end="url(#ar-a)"/>
+        <line x1="218" y1="196" x2="218" y2="222" marker-end="url(#ar-a)"/>
+        <line x1="218" y1="276" x2="218" y2="302" marker-end="url(#ar-a)"/>
+        <line x1="218" y1="356" x2="218" y2="392" marker-end="url(#ar-a)"/>
+      </g>
+
+      <g fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.75">
+        <rect x="128" y="64" width="180" height="52" rx="10"/>
+        <rect x="128" y="144" width="180" height="52" rx="10"/>
+        <rect x="128" y="224" width="180" height="52" rx="10"/>
+        <rect x="128" y="304" width="180" height="52" rx="10"/>
+      </g>
+
+      <g font-size="12" fill="currentColor">
+        <text x="140" y="84" font-size="10.5" font-weight="700" opacity="0.55">1 마찰 0</text>
+        <text x="140" y="103" font-weight="600">손이 더 가는가?</text>
+        <text x="140" y="164" font-size="10.5" font-weight="700" opacity="0.55">2 0원</text>
+        <text x="140" y="183" font-weight="600">정액제 밖 돈이 드는가?</text>
+        <text x="140" y="244" font-size="10.5" font-weight="700" opacity="0.55">3 때깔</text>
+        <text x="140" y="263" font-weight="600">근거를 댈 수 있는가?</text>
+        <text x="140" y="324" font-size="10.5" font-weight="700" opacity="0.55">4 신뢰</text>
+        <text x="140" y="343" font-weight="600">검증을 보였는가?</text>
+      </g>
+
+      <g stroke="currentColor" stroke-width="1.1" fill="none" opacity="0.5" color="currentColor">
+        <line x1="128" y1="90" x2="104" y2="90" marker-end="url(#ar)"/>
+        <line x1="128" y1="170" x2="104" y2="170" marker-end="url(#ar)"/>
+        <line x1="128" y1="250" x2="104" y2="250" marker-end="url(#ar)"/>
+        <line x1="128" y1="330" x2="104" y2="330" marker-end="url(#ar)"/>
+      </g>
+
+      <g font-size="11" fill="currentColor" opacity="0.62" text-anchor="end">
+        <text x="98" y="87">예 -</text><text x="98" y="101">설계를 다시</text>
+        <text x="98" y="167">예 -</text><text x="98" y="181">보류</text>
+        <text x="98" y="247">아니오 -</text><text x="98" y="261">조사부터</text>
+        <text x="98" y="327">아니오 -</text><text x="98" y="341">배포 전 검증</text>
+      </g>
+
+      <rect x="128" y="394" width="180" height="34" rx="10" fill="var(--accent)"/>
+      <text x="218" y="416" text-anchor="middle" font-size="13" font-weight="700" fill="var(--paper)">배포</text>
+
+      <text x="218" y="452" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.5">막힌 요구는 버리지 않고 조건이 바뀔 때까지 보류한다</text>
+    </svg>
+    <figcaption>기둥은 우선순위 목록이 아니라 순서가 있는 관문이다 - 아무리 예쁜 기능도 1번에서 걸리면 그대로 끝난다.</figcaption>
+  </figure>
+
+  <h2><span class="n">02</span>기둥 1 - 마찰 0</h2>
+  <div class="pillar">
+    <div class="pillar-top">
+      <div class="pillar-num">1</div>
+      <div>
+        <h3 class="pillar-name">마찰 0 - 내 손이 가면 진 것</h3>
+        <p class="pillar-def">기능이 되는지가 아니라 손이 몇 번 가는지로 판단한다. 이 기둥이 요구의 절반을 차지한다.</p>
+      </div>
     </div>
-    <p class="said">
-      "공유하면 아무런 클릭 없이 자동으로 내가 원하는 형태로 가공해서 저장"
-    </p>
-    <ul>
-      <li>공유 한 번으로 저장부터 요약까지 - 앱을 먼저 열 필요 없음</li>
-      <li><b>"무료키 니가 스스로 넣어놔야지"</b> - 설정조차 사용자 몫이 아니다</li>
-      <li><b>"ai도 여러번 해서 겨우 한번 됨"</b> - 재시도도 사용자 몫이 아니다 (v1.4에서 앱이 대신 기다림)</li>
-    </ul>
-    <p>
-      이 겹의 판단 기준은 하나다. <b>사용자가 같은 동작을 두 번 하면 그건 앱의 결함이다.</b>
-    </p>
+    <div class="verdict"><span>판정 기준</span>사용자가 같은 동작을 두 번 하게 되면, 그건 사용자의 인내심 문제가 아니라 앱의 결함이다.</div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">1-1</span><h4>수집은 공유 한 번으로 끝난다</h4></div>
+      <ul class="twigs">
+        <li><span>안드로이드 공유 타깃 등록 - 앱을 먼저 열 필요가 없다</span><em class="v">v0.5</em></li>
+        <li><span>제목과 URL을 자동으로 갈라 저장</span><em class="v">v0.5</em></li>
+        <li><span>앱이 켜져 있을 때 온 공유가 유실되던 문제 - 알림과 보관을 이중화</span><em class="v">v0.71</em></li>
+        <li><span>유튜브 공유 URL의 추적 파라미터 자동 제거 (없으면 요약이 100% 실패)</span><em class="v">v0.65</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">1-2</span><h4>재가공은 클릭 없이 일어난다</h4></div>
+      <ul class="twigs">
+        <li><span>공유 즉시 요약-인사이트-태그까지 자동 저장</span><em class="v">v0.6</em></li>
+        <li><span><b>키를 사용자가 넣지 않는다</b> - 빌드 때 시크릿에서 주입 <b>"무료키 니가 스스로 넣어놔야지"</b></span><em class="v">v0.62</em></li>
+        <li><span>영상은 AI가 직접 본다 - 자막 유무와 무관</span><em class="v">v0.6</em></li>
+        <li><span>학습 카드도 자동 생성</span><em class="v">v0.6</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">1-3</span><h4>실패했을 때 기다리는 일도 앱이 한다</h4></div>
+      <ul class="twigs">
+        <li><span>한 모델이 막히면 다른 모델로 자동 전환 (무료 모델은 하나씩 혼잡해진다)</span><em class="v">v1.3</em></li>
+        <li><span><b>혼잡하면 15-40-90초 뒤 스스로 재시도</b> <b>"ai도 여러번 해서 겨우 한번 됨"</b></span><em class="v">v1.4</em></li>
+        <li><span>본문 직렬화가 어긋나면 다른 방식으로 1회 자동 재시도</span><em class="v">v0.64</em></li>
+        <li><span>캡처는 절대 유실하지 않는다 - AI가 실패해도 원본은 저장된 상태로 남는다</span><em class="v">원칙</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">1-4</span><h4>다음에 뭘 할지 앱이 말해준다</h4></div>
+      <ul class="twigs">
+        <li><span>요약 직후 다음 단계 패널 <b>"그 다음 뭘 해야할지 모르겠음 ux"</b></span><em class="v">v0.66</em></li>
+        <li><span>요약이 끝나면 "다시 생성"은 조용한 버튼으로 물러난다</span><em class="v">v0.66</em></li>
+        <li><span>영상 대기 시간을 초 단위로 보여주고, 무한 대기는 타임아웃으로 끊는다</span><em class="v">v0.66</em></li>
+      </ul>
+    </div>
   </div>
 
-  <div class="layer">
-    <div class="layer-head">
-      <span class="layer-tag">2겹</span>
-      <h3>0원 - 정액제 밖으로 돈이 나가지 않게</h3>
+  <h2><span class="n">03</span>기둥 2 - 0원</h2>
+  <div class="pillar">
+    <div class="pillar-top">
+      <div class="pillar-num">2</div>
+      <div>
+        <h3 class="pillar-name">0원 - 정액제 밖으로 한 푼도</h3>
+        <p class="pillar-def">비용 구조가 기능 선택을 지배한다. 이 기둥은 무엇을 만들지보다 <b>무엇을 안 만들지</b>로 증명된다.</p>
+      </div>
     </div>
-    <p class="said">"돈은 정액제 외에 추가로는 안 나가고 싶고"</p>
-    <ul>
-      <li>무료 한도 안에서만 동작하고, 한도를 넘으면 과금이 아니라 대기 안내</li>
-      <li>서버도 계정도 없음 - 데이터는 기기에만</li>
-      <li>이 원칙 때문에 <b>여러 기기 동기화는 보류</b>다. 만들면 서버와 계정이 생긴다</li>
-    </ul>
-  </div>
+    <div class="verdict"><span>판정 기준</span>돈이 드는 해법은 아무리 좋아도 탈락한다. 예외는 사용자가 비용을 명시적으로 승인할 때뿐이다.</div>
 
-  <div class="layer">
-    <div class="layer-head">
-      <span class="layer-tag">3겹</span>
-      <h3>때깔 - 기능만큼 중요한 것</h3>
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">2-1</span><h4>무료 한도 안에서만 동작한다</h4></div>
+      <ul class="twigs">
+        <li><span>Gemini 무료 티어를 기기에서 직접 호출 - 중계 서버 없음</span><em class="v">v0.6</em></li>
+        <li><span>한도를 넘으면 과금이 아니라 대기 안내</span><em class="v">v0.72</em></li>
+        <li><span>모델 3종을 돌려 무료 용량을 최대한 긁어 쓴다</span><em class="v">v1.3</em></li>
+      </ul>
     </div>
-    <p class="said">
-      "바탕화면 아이콘부터 내부 아이콘, 디자인 등 싹 다 최신 디자인 트렌드 래퍼런스 조사해서
-      클로드 디자인으로 다시 만들어서 교체하자"
-    </p>
-    <p class="said">"모든 모드를 글로벌 1티어 앱 디자인 래퍼런스를 참고해서 클로드 디자인으로 디벨롭"</p>
-    <ul>
-      <li>디자인 요구가 전체 요구의 3분의 1이 넘는다 - 부차적인 항목이 아니다</li>
-      <li>핵심어는 <b>"래퍼런스 조사해서"</b> - 취향이 아니라 근거를 요구한다</li>
-      <li><b>"아이콘 촌스러워"</b> - 이모지 하나까지 걸린다. 남의 그림을 빌려 쓰면 티가 난다</li>
-      <li><b>"더 디벨롭해"</b> - 한 번 만든 것으로 끝나지 않는다. 매번 한 단계 더 올린다</li>
-    </ul>
-  </div>
 
-  <div class="layer">
-    <div class="layer-head">
-      <span class="layer-tag">4겹</span>
-      <h3>검증 - 말이 아니라 확인</h3>
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">2-2</span><h4>서버도 계정도 없다</h4></div>
+      <ul class="twigs">
+        <li><span>데이터는 기기 안에만 (localStorage) - 초기 Express+SQLite 구성을 걷어냄</span><em class="v">v0.1</em></li>
+        <li><span>백업은 파일 하나 - 어디에 둘지는 사용자가 고른다</span><em class="v">v0.7</em></li>
+        <li><span>백업 파일에 API 키는 넣지 않는다 - 백업은 아무 데나 가기 때문</span><em class="v">v0.7</em></li>
+      </ul>
     </div>
-    <p class="said">"기획대로 최신 버전으로 업데이트 개발 / 리뷰 철저"</p>
-    <p class="said">"이 버전 문제 없나 모의 리뷰"</p>
-    <ul>
-      <li>"됐습니다"를 믿지 않는다. <b>스스로 검증하고 결과를 보고해야</b> 신뢰가 성립한다</li>
-      <li>리뷰를 시켰을 때 실제로 결함이 나왔다 - v1.2에서 7건, v1.21에서 5건, v1.3에서 6건</li>
-      <li>그래서 리뷰는 형식이 아니라 <b>매 버전의 필수 공정</b>이다</li>
-    </ul>
-  </div>
 
-  <h2><span class="n">03</span>절대 규칙</h2>
-  <p class="lede">한 번 말했고, 어겼을 때 다시 지적받은 것들. 협상 대상이 아니다.</p>
-
-  <div class="rule">
-    <div class="rule-mark">-</div>
-    <div class="rule-body">
-      <b>구분 기호는 하이픈만</b>
-      <span>"ㅡ나 • 쓰지말고 - 로 통일하라니깐" - 앱 문구, 문서, 대화 답변 전부에 적용</span>
-    </div>
-  </div>
-  <div class="rule">
-    <div class="rule-mark">**</div>
-    <div class="rule-body">
-      <b>별표는 화면에 절대 안 나온다</b>
-      <span>"**는 절대 안나오게 하자" - 렌더링 실패 시 서식을 포기하더라도 기호는 지운다</span>
-    </div>
-  </div>
-  <div class="rule">
-    <div class="rule-mark">#</div>
-    <div class="rule-body">
-      <b>버전은 매 변경마다 올리고 앱에 표시</b>
-      <span>작은 변경 +0.01, 큰 변경 +0.1 - 설정 화면 하단에서 지금 버전을 확인할 수 있다</span>
-    </div>
-  </div>
-  <div class="rule">
-    <div class="rule-mark">키</div>
-    <div class="rule-body">
-      <b>API 키는 소스에 남기지 않는다</b>
-      <span>빌드할 때 GitHub Secret에서 주입한다. 백업 파일에도 키는 빠진다</span>
-    </div>
-  </div>
-  <div class="rule">
-    <div class="rule-mark">약</div>
-    <div class="rule-body">
-      <b>로그인된 웹 AI 자동 조작은 만들지 않는다</b>
-      <span>세 번 검토했고 세 번 같은 결론 - 약관 위반이고 계정 정지 위험이 실제로 있다</span>
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">2-3</span><h4>이 기둥이 막아 세운 것</h4></div>
+      <ul class="twigs">
+        <li><span><b>여러 기기 동기화</b> - 서버와 계정이 생기므로 0원과 정면충돌. 보류</span><em class="v open">보류</em></li>
+        <li><span>유료 API 모델 - 검토 대상에 오르지 않음</span><em class="v open">제외</em></li>
+        <li><span>공유할 때 학습 카드까지 자동 생성 - API 사용량이 2배라 기본 꺼짐 후보로만</span><em class="v open">후보</em></li>
+      </ul>
     </div>
   </div>
 
-  <h2><span class="n">04</span>요구와 결과</h2>
-  <p class="lede">각 요구가 어느 버전에서 닫혔는지.</p>
+  <h2><span class="n">04</span>기둥 3 - 때깔</h2>
+  <div class="pillar">
+    <div class="pillar-top">
+      <div class="pillar-num">3</div>
+      <div>
+        <h3 class="pillar-name">때깔 - 취향이 아니라 근거</h3>
+        <p class="pillar-def">완성도는 기능의 장식이 아니라 요구 그 자체다. 다만 "예쁘게"가 아니라 "조사해서"를 요구했다.</p>
+      </div>
+    </div>
+    <div class="verdict"><span>판정 기준</span>근거를 댈 수 없는 디자인 결정은 하지 않는다. 참조한 앱의 실제 수치를 대지 못하면 그것은 취향이다.</div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">3-1</span><h4>레퍼런스를 실측해서 옮긴다</h4></div>
+      <ul class="twigs">
+        <li><span>테마마다 세계 기준을 하나씩 배정 - 토스풍은 토스 TDS와 Revolut</span><em class="v">v1.2</em></li>
+        <li><span>편집형은 Readwise Reader와 NYT, 인덱스형은 Linear와 Things 3</span><em class="v">v1.2</em></li>
+        <li><span>몰입형은 Spotify와 Linear 다크 - 표면 사다리를 그대로 가져옴</span><em class="v">v1.2</em></li>
+        <li><span>색-크기-간격을 눈대중이 아니라 실제 값으로 조사해 옮김</span><em class="v">v1.1</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">3-2</span><h4>남의 그림을 빌려 쓰지 않는다</h4></div>
+      <ul class="twigs">
+        <li><span>이모지 전량 제거 - 직접 그린 일러스트로 교체 <b>"아이콘 촌스러워"</b></span><em class="v">v1.3</em></li>
+        <li><span>아이콘 세트를 24px 격자, 2px 선으로 통일</span><em class="v">v1.1</em></li>
+        <li><span>런처 아이콘을 직접 제작 - 모노크롬 레이어까지 그려 넣음</span><em class="v">v1.1</em></li>
+        <li><span>그라디언트는 AI 표시 한 곳에만 - 쓰임이 하나면 의미가 된다</span><em class="v">v1.1</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">3-3</span><h4>한글로 읽기 좋게</h4></div>
+      <ul class="twigs">
+        <li><span>본명조 한글 서브셋을 앱에 내장, 읽기 본문 행간 1.8</span><em class="v">v1.2</em></li>
+        <li><span>단어 단위 줄바꿈 - 긴 제목이 아무 데서나 끊기지 않게</span><em class="v">v1.2</em></li>
+        <li><span>긴 문장은 가운데 정렬 금지 - 줄마다 시작점이 달라진다</span><em class="v">v1.4</em></li>
+        <li><span>AI 답변을 한국어로 강제 - 일본어 가나가 섞여 나온 사고 이후</span><em class="v">v1.4</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">3-4</span><h4>손맛 - 눌리는 느낌이 있어야 한다</h4></div>
+      <ul class="twigs">
+        <li><span>토스식 눌림 - 회색으로 물들며 0.98로 줄고, 놓을 때 천천히 돌아온다</span><em class="v">v1.2</em></li>
+        <li><span>듀오링고식 버튼 - 4px 그림자 위에 앉았다가 누르면 3px 가라앉는다</span><em class="v">v1.4</em></li>
+        <li><span>테마마다 눌림이 다르다 - 밀도 높은 목록은 즉각, 다크는 밝기 한 단계</span><em class="v">v1.2</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">3-5</span><h4>한 번 만들고 끝내지 않는다</h4></div>
+      <ul class="twigs">
+        <li><span>같은 학습 화면을 세 번 올림 - 카드(v0.4) 다음 정돈(v1.1) 다음 퀴즈(v1.4)</span><em class="v">v1.4</em></li>
+        <li><span><b>"더 디벨롭해"</b>는 매번 한 단계 더 올리라는 상시 지시로 받는다</span><em class="v">상시</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><span class="n">05</span>기둥 4 - 신뢰</h2>
+  <div class="pillar">
+    <div class="pillar-top">
+      <div class="pillar-num">4</div>
+      <div>
+        <h3 class="pillar-name">신뢰 - 확인된 것만 참이다</h3>
+        <p class="pillar-def">"됐습니다"는 증거가 아니다. 검증 절차와 그 결과 보고가 결과물의 일부다.</p>
+      </div>
+    </div>
+    <div class="verdict"><span>판정 기준</span>검증을 보여주지 못한 완료는 완료가 아니다. 리뷰를 시킬 때마다 실제로 결함이 나왔다 - 7건, 5건, 6건.</div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">4-1</span><h4>앱이 거짓말하지 않는다</h4></div>
+      <ul class="twigs">
+        <li><span>오류를 추측하지 않는다 - 단정할 수 없으면 서버의 실제 응답을 그대로 보여준다</span><em class="v">v0.64</em></li>
+        <li><span>혼잡(503)은 실패가 아니라 대기 - 빨간 글씨 대신 회색 안내</span><em class="v">v0.72</em></li>
+        <li><span>지금 어떤 키를 쓰는 중인지 가려서 표시하고, 지울 수 있게</span><em class="v">v0.7</em></li>
+        <li><span>연결 테스트가 실제로 답한 모델 이름을 함께 보여준다</span><em class="v">v1.31</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">4-2</span><h4>앱이 스스로 진단한다</h4></div>
+      <ul class="twigs">
+        <li><span>연결 테스트 - 실기기에서 한 탭으로 상태 판정</span><em class="v">v0.64</em></li>
+        <li><span>공유 상태 진단 - 공유해도 아무 일이 없을 때 무엇을 받았는지 보여준다</span><em class="v">v0.71</em></li>
+        <li><span>기기에서만 재현되는 경로가 있으므로, 진단 장치는 임시가 아니라 상설이다</span><em class="v">원칙</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">4-3</span><h4>리뷰는 취향이 아니라 공정이다</h4></div>
+      <ul class="twigs">
+        <li><span>v1.2 구현 리뷰 7건 - 상세 태그 누락, 긴 제목 가로 넘침 등 전부 실재</span><em class="v">v1.2</em></li>
+        <li><span>전체 리뷰 5건 - 달력 주 오분류, 연도 누락</span><em class="v">v1.21</em></li>
+        <li><span>모의 리뷰 6건 - 폴백이 필요한 상황에서 폴백이 안 되던 경우들</span><em class="v">v1.31</em></li>
+        <li><span><b>테스트는 되는 경우가 아니라 안 되는 경우를 고정한다</b> - v1.3의 교훈</span><em class="v">v1.31</em></li>
+        <li><span>회귀 12종 상시 - 매 배포 전 전량 통과가 조건</span><em class="v">상시</em></li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head"><span class="branch-id">4-4</span><h4>기기에서만 참이 되는 것이 있다</h4></div>
+      <ul class="twigs">
+        <li><span>유튜브 공유 URL의 추적 파라미터 - 손으로 쓴 URL로는 영원히 못 잡는다</span><em class="v">v0.65</em></li>
+        <li><span>앱이 켜져 있을 때의 공유 유실 - 브라우저에서는 재현되지 않았다</span><em class="v">v0.71</em></li>
+        <li><span>백업 내보내기의 안드로이드 경로 - 아직 확인 안 됨</span><em class="v open">미확인</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><span class="n">06</span>법 - 협상하지 않는 것</h2>
+  <p class="lede">한 번 말했고, 어겼을 때 다시 지적받은 것들. 판단 대상이 아니라 전제다.</p>
+
+  <div class="law">
+    <div class="law-mark">-</div>
+    <div class="law-body"><b>구분 기호는 하이픈만</b>
+      <span>"ㅡ나 • 쓰지말고 - 로 통일하라니깐" - 앱 문구, 문서, 대화 답변 전부</span></div>
+  </div>
+  <div class="law">
+    <div class="law-mark">**</div>
+    <div class="law-body"><b>별표는 화면에 절대 안 나온다</b>
+      <span>렌더링에 실패하면 서식을 포기하더라도 기호는 지운다</span></div>
+  </div>
+  <div class="law">
+    <div class="law-mark">가</div>
+    <div class="law-body"><b>한국어로만 쓴다</b>
+      <span>AI 답변에 일본어 가나가 섞여 나온 뒤 프롬프트 규칙으로 승격 (v1.4)</span></div>
+  </div>
+  <div class="law">
+    <div class="law-mark">#</div>
+    <div class="law-body"><b>버전은 매 변경마다 올리고 앱에 표시한다</b>
+      <span>작은 변경 +0.01, 큰 변경 +0.1 - 설정 화면 하단에서 확인</span></div>
+  </div>
+  <div class="law">
+    <div class="law-mark">키</div>
+    <div class="law-body"><b>API 키는 소스에도 백업에도 남기지 않는다</b>
+      <span>빌드할 때 시크릿에서 주입한다</span></div>
+  </div>
+  <div class="law">
+    <div class="law-mark">약</div>
+    <div class="law-body"><b>로그인된 웹 AI 자동 조작은 만들지 않는다</b>
+      <span>세 번 검토했고 세 번 같은 결론 - 약관 위반이고 계정 정지 위험이 실재한다</span></div>
+  </div>
+
+  <h2><span class="n">07</span>요구를 읽는 법</h2>
+  <p class="lede">말은 짧고 요구는 여러 개다. 한 줄을 한 건으로 받으면 반은 놓친다.</p>
+  <p class="said">
+    "학습 쪽 글자 깨진다 / 퀴즈로 하든가 카드로 하든가 답보기 이 양식 이상해 /
+    듀오링고를 참고하든가 / 더 디벨롭해 / 그리고 ai도 여러번 해서 겨우 한번 됨"
+    <small>v1.4를 부른 한 메시지 - 여기에 독립된 요구가 다섯 개 들어 있다</small>
+  </p>
+  <ul class="plain">
+    <li><b>깨진 글자</b> - 원인 규명 요구 (결과: 폰트가 아니라 AI 출력 문제였다)</li>
+    <li><b>양식이 이상하다</b> - 형식 자체를 다시 정하라는 요구, 부분 수정이 아님</li>
+    <li><b>퀴즈로 하든가 카드로 하든가</b> - 어정쩡한 중간을 버리고 하나를 고르라는 요구</li>
+    <li><b>듀오링고를 참고하든가</b> - 근거로 쓸 레퍼런스 지정 (기둥 3의 발동)</li>
+    <li><b>ai도 여러번</b> - 별개의 안정성 결함 보고 (기둥 1의 발동)</li>
+  </ul>
+  <p>
+    읽는 규칙 셋. <b>첫째</b>, 슬래시와 줄바꿈은 요구의 경계다. <b>둘째</b>, "이상해"는
+    부분 수정이 아니라 재설계 요구다. <b>셋째</b>, 레퍼런스 이름이 나오면 그것은 힌트가 아니라 기준이다.
+  </p>
+
+  <h2><span class="n">08</span>요구와 결과</h2>
   <div class="table-wrap">
     <table>
-      <thead>
-        <tr><th>요구</th><th>어떻게 닫혔나</th><th>버전</th><th>상태</th></tr>
-      </thead>
+      <thead><tr><th>요구</th><th>기둥</th><th>어떻게 닫혔나</th><th>버전</th><th>상태</th></tr></thead>
       <tbody>
-        <tr><td>마찰 0 수집</td><td>안드로이드 공유 타깃 - 클릭 없이 저장</td><td>0.5</td><td><span class="pill done">닫힘</span></td></tr>
-        <tr><td>AI 자동 재가공</td><td>Gemini 무료 API 직접 호출, 영상은 직접 시청</td><td>0.6</td><td><span class="pill done">닫힘</span></td></tr>
-        <tr><td>키 설정 불필요</td><td>Secret 주입으로 내장, 설치 즉시 동작</td><td>0.62</td><td><span class="pill done">닫힘</span></td></tr>
-        <tr><td>0원 유지</td><td>무료 티어 안에서만, 한도 초과는 대기 안내</td><td>0.6</td><td><span class="pill done">닫힘</span></td></tr>
-        <tr><td>편안한 회수</td><td>검색-태그-발췌 목록, 요약 렌더링과 다음 행동 안내</td><td>0.66</td><td><span class="pill done">닫힘</span></td></tr>
-        <tr><td>학습</td><td>간격 반복 문답 카드, 등급별 실제 간격 표시</td><td>0.4 - 1.4</td><td><span class="pill done">닫힘</span></td></tr>
-        <tr><td>데이터 안전</td><td>JSON 한 파일로 백업-복원, id 기준 병합</td><td>0.7</td><td><span class="pill open">기기 확인 대기</span></td></tr>
-        <tr><td>레퍼런스 기반 UI</td><td>테마 4종을 각각 세계 기준으로 디벨롭</td><td>1.1 - 1.2</td><td><span class="pill done">닫힘</span></td></tr>
-        <tr><td>디자인 디벨롭</td><td>학습 화면을 듀오링고 문법의 퀴즈로 재설계</td><td>1.4</td><td><span class="pill open">기기 확인 대기</span></td></tr>
-        <tr><td>AI 안정성</td><td>모델 자동 전환 + 앱이 스스로 재시도(15-40-90초)</td><td>1.3 - 1.4</td><td><span class="pill open">기기 확인 대기</span></td></tr>
+        <tr><td>마찰 0 수집</td><td>1</td><td>공유 타깃 - 클릭 없이 저장</td><td>0.5</td><td><span class="pill done">닫힘</span></td></tr>
+        <tr><td>AI 자동 재가공</td><td>1</td><td>무료 API 직접 호출, 영상은 직접 시청</td><td>0.6</td><td><span class="pill done">닫힘</span></td></tr>
+        <tr><td>키 설정 불필요</td><td>1</td><td>시크릿 주입으로 내장</td><td>0.62</td><td><span class="pill done">닫힘</span></td></tr>
+        <tr><td>0원 유지</td><td>2</td><td>무료 티어 안에서만, 초과는 대기 안내</td><td>0.6</td><td><span class="pill done">닫힘</span></td></tr>
+        <tr><td>편안한 회수</td><td>1 3</td><td>검색-태그-발췌, 요약 렌더링과 다음 행동</td><td>0.66</td><td><span class="pill done">닫힘</span></td></tr>
+        <tr><td>학습</td><td>3</td><td>간격 반복, 등급별 실제 간격, 퀴즈 형식</td><td>1.4</td><td><span class="pill open">기기 확인</span></td></tr>
+        <tr><td>데이터 안전 (숨은 요구)</td><td>2</td><td>JSON 한 파일 백업-복원, id 기준 병합</td><td>0.7</td><td><span class="pill open">기기 확인</span></td></tr>
+        <tr><td>레퍼런스 기반 UI</td><td>3</td><td>테마 4종에 세계 기준 배정</td><td>1.2</td><td><span class="pill done">닫힘</span></td></tr>
+        <tr><td>AI 안정성</td><td>1 4</td><td>모델 자동 전환 + 앱이 스스로 재시도</td><td>1.4</td><td><span class="pill open">기기 확인</span></td></tr>
       </tbody>
     </table>
   </div>
 
-  <h2><span class="n">05</span>이 프로젝트가 가르친 것</h2>
-  <p class="lede">같은 실수를 두 번 하지 않기 위해 남기는 항목.</p>
-  <ul>
-    <li><b>추측한 오류 메시지는 디버깅을 막는다.</b> 모든 400을 "키가 잘못됨"으로 표시한 탓에 엉뚱한 곳을 오래 팠다. 메시지를 정직하게 바꾼 다음 시도에서 진짜 원인(유튜브 추적 파라미터)이 바로 나왔다</li>
-    <li><b>기기에서만 재현되는 경로가 있다.</b> 공유 인텐트가 만드는 URL, 네이티브 HTTP, 공유 시트 - 개발 환경에서 손으로 만든 입력은 실제 입력과 다르다. 그래서 앱이 스스로 진단을 말하게 만드는 장치(연결 테스트, 공유 상태)를 상설로 남겼다</li>
-    <li><b>테스트는 되는 경우가 아니라 안 되는 경우를 고정해야 한다.</b> v1.3은 "폴백이 된다"만 검증했고, 리뷰에서 폴백이 안 되는 경우 다섯 가지가 나왔다</li>
-    <li><b>화면에 보이는 글자가 깨졌다고 폰트 문제는 아니다.</b> 학습 카드의 가타카나는 AI가 그렇게 쓴 것이었다 - 렌더링이 아니라 프롬프트를 고쳐야 했다</li>
+  <h2><span class="n">09</span>이 프로젝트가 가르친 것</h2>
+  <ul class="plain">
+    <li><b>추측한 오류 메시지는 디버깅을 막는다.</b> 모든 400을 "키가 잘못됨"으로 표시한 탓에 엉뚱한 곳을 오래 팠다. 메시지를 정직하게 바꾼 다음 시도에서 진짜 원인이 바로 나왔다</li>
+    <li><b>고장난 기능 뒤에는 한 번도 검증되지 않은 기능이 줄지어 숨는다.</b> 요약이 처음 끝까지 돌자마자 별표 문제와 다음 행동 부재가 한꺼번에 드러났다</li>
+    <li><b>테스트는 되는 경우가 아니라 안 되는 경우를 고정해야 한다.</b> v1.3은 "폴백이 된다"만 검증했고, 폴백이 안 되는 경우 다섯 가지가 리뷰에서 나왔다</li>
+    <li><b>화면의 글자가 깨졌다고 폰트 문제는 아니다.</b> 학습 카드의 가타카나는 AI가 그렇게 쓴 것이었다 - 고칠 곳은 렌더러가 아니라 프롬프트였다</li>
+    <li><b>안 보이는 코드는 죽은 코드다.</b> 사이드바는 v0.2 이후 어떤 너비에서도 화면에 나오지 않았는데 v1.3까지 살아 있었다</li>
+  </ul>
+
+  <h2><span class="n">10</span>일하는 순서</h2>
+  <p class="lede">매번 같은 순서였고, 그 순서가 결과를 만들었다. 중간을 건너뛴 버전은 예외 없이 되돌아왔다.</p>
+  <ul class="plain">
+    <li><b>1. 레퍼런스 조사</b> - 무엇을 참조할지 정하고 실제 수치를 뽑는다</li>
+    <li><b>2. 시안</b> - 클로드 디자인 캔버스에 아트보드로 그린다</li>
+    <li><b>3. 확인</b> - 시안을 보여주고 방향을 확정받는다</li>
+    <li><b>4. 구현</b> - 토큰부터 화면까지, 시안을 코드로 옮긴다</li>
+    <li><b>5. 리뷰</b> - 코드 리뷰를 돌리고 나온 것을 전부 고친다</li>
+    <li><b>6. 검증</b> - 회귀 전량 + 4개 테마 스크린샷 + APK 내용물 대조</li>
+    <li><b>7. 실기기</b> - 기기에서만 참이 되는 것을 확인받는다</li>
   </ul>
 
   <div class="note">
-    <b>지금 확인이 필요한 것 - 기기에서만 알 수 있다</b>
-    1. 백업 내보내기가 공유 시트를 띄우고 파일이 실제로 저장되는지 (v0.7부터 열려 있음)<br>
-    2. 새 학습 화면의 손맛 - 버튼이 눌리는 느낌과 답이 올라오는 속도<br>
-    3. 자동 재시도가 실제 혼잡 상황에서 요약을 건져내는지<br>
-    4. 이미 저장된 카드의 일본어 섞임은 고쳐지지 않는다 - 그 카드는 지우고 다시 만들어야 한다
+    <b>지금 열려 있는 것 - 기기에서만 알 수 있다</b>
+    <ol>
+      <li>백업 내보내기가 공유 시트를 띄우고 파일이 실제로 저장되는지 (v0.7부터 열려 있음)</li>
+      <li>새 학습 화면의 손맛 - 버튼이 눌리는 느낌과 답이 올라오는 속도</li>
+      <li>자동 재시도가 실제 혼잡 상황에서 요약을 건져내는지</li>
+      <li>이미 저장된 카드의 일본어 섞임은 고쳐지지 않는다 - 그 카드는 지우고 다시 만들어야 한다</li>
+    </ol>
   </div>
 
-  <h2><span class="n">06</span>다음 사람에게</h2>
-  <p>
-    이어서 작업할 때 순서는 매번 같았고, 그 순서가 결과를 만들었다.
-    <b>레퍼런스 조사 - 시안(클로드 디자인) - 확인 - 구현 - 철저 리뷰 - 실기기 확인</b>.
-    중간을 건너뛴 버전은 예외 없이 되돌아왔다.
-  </p>
   <p>
     함께 보는 문서 - <a href="https://claude.ai/code/artifact/9929f461-51db-49a7-b6c6-ec5e16affef6">기획서</a>(제품 정의와 진단 기록),
     <a href="https://claude.ai/code/artifact/cb877fb4-e5e3-4c0c-90af-e694a243e29e">디자인 캔버스</a>(모든 화면 시안).
