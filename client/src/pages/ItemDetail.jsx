@@ -40,6 +40,8 @@ export default function ItemDetail() {
   const [cardsBusy, setCardsBusy] = useState(false)
   const [cardsError, setCardsError] = useState(null)
   const [elapsed, setElapsed] = useState(0)
+  // { attempt, secondsLeft } while a busy Google is being waited out.
+  const [retry, setRetry] = useState(null)
   const location = useLocation()
 
   const isVideo = isVideoSource(item?.source_url)
@@ -77,9 +79,29 @@ export default function ItemDetail() {
     }
   }, [item?.id, location.state?.autoAi])
 
-  async function runAutoSummary(current) {
+  // Waiting out a busy model is the app's job, not the user's. Spaced out so
+  // three tries cover a couple of minutes without hammering Google.
+  const RETRY_DELAYS = [15, 40, 90]
+
+  useEffect(() => {
+    if (!retry) return undefined
+    if (retry.secondsLeft <= 0) {
+      const { attempt } = retry
+      setRetry(null)
+      runAutoSummary(item, attempt)
+      return undefined
+    }
+    const tick = setTimeout(
+      () => setRetry((r) => (r ? { ...r, secondsLeft: r.secondsLeft - 1 } : r)),
+      1000
+    )
+    return () => clearTimeout(tick)
+  }, [retry])
+
+  async function runAutoSummary(current, attempt = 0) {
     setAiBusy(true)
     setAiError(null)
+    setRetry(null)
     try {
       const summary = await summarizeItem(current)
       const merged = [...current.tags, ...extractTagsFromSummary(summary)]
@@ -88,6 +110,9 @@ export default function ItemDetail() {
       setTagsInput(updated.tags.join(', '))
     } catch (err) {
       setAiError({ text: err.message, kind: err.kind || 'error' })
+      if (err.kind === 'busy' && attempt < RETRY_DELAYS.length) {
+        setRetry({ attempt: attempt + 1, secondsLeft: RETRY_DELAYS[attempt] })
+      }
     } finally {
       setAiBusy(false)
     }
@@ -370,10 +395,25 @@ export default function ItemDetail() {
           {aiError && !aiBusy && (
             <p
               className={`test-result ${aiError.kind === 'busy' ? 'busy' : 'bad'}`}
-              style={{ margin: '0 0 12px' }}
+              style={{ margin: '0 0 8px' }}
             >
               {aiError.text}
             </p>
+          )}
+
+          {retry && !aiBusy && (
+            <div className="retry-bar">
+              <span>
+                {retry.secondsLeft}초 뒤 자동으로 다시 시도할게요 ({retry.attempt}/
+                {RETRY_DELAYS.length})
+              </span>
+              <button className="retry-now" onClick={() => runAutoSummary(item, retry.attempt)}>
+                지금
+              </button>
+              <button className="retry-now" onClick={() => setRetry(null)}>
+                그만
+              </button>
+            </div>
           )}
 
           {/* Once a summary exists, redoing it is no longer the main move -

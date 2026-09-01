@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { cards as cardStore, schedule } from '../cards'
 import { store } from '../store'
-import { ArtNoCards, ArtSessionDone } from '../icons'
+import { ArtNoCards, ArtSessionDone, IconArchive } from '../icons'
 
 const GRADES = [
   { id: 'again', label: '다시' },
@@ -99,43 +99,55 @@ export default function Review() {
     )
   }
 
+  const seen = done + 1
+
   return (
-    <div className="page page-top">
-      <div className="list-head">
+    <div className="page page-top page-quiz">
+      <div className="quiz-head">
         <h1 className="list-title">학습</h1>
-        <span className="list-count">{queue.length}장 남음</span>
+        <span className="quiz-count">
+          {seen} / {done + queue.length}
+        </span>
       </div>
 
-      <div className="review-progress">
+      <div className="quiz-progress">
         <i style={{ width: `${Math.round((done / (done + queue.length)) * 100)}%` }}></i>
       </div>
 
-      <div className="review-card">
-        <div className="review-front">{card.front}</div>
+      <div className="quiz-body">
+        <p className="quiz-label">문제</p>
+        <p className="quiz-question">{card.front}</p>
+
         {revealed && (
-          <>
-            <div className="review-divider"></div>
-            <div className="review-back">{card.back}</div>
-          </>
+          <div className="quiz-answer">
+            <p className="quiz-label">답</p>
+            <p className="quiz-answer-text">{card.back}</p>
+          </div>
         )}
       </div>
 
-      {revealed ? (
-        <div className="grade-row">
-          {GRADES.map((g) => (
-            <button key={g.id} className={`grade-btn grade-${g.id}`} onClick={() => handleGrade(g.id)}>
-              <span className="grade-label">{g.label}</span>
-              <span className="grade-hint">{intervalHint(card, g.id)}</span>
-            </button>
-          ))}
-        </div>
-      ) : (
-        <button className="block" style={{ marginTop: 16 }} onClick={() => setRevealed(true)}>
-          답 보기
-        </button>
-      )}
-
       <SourceLink itemId={card.item_id} />
+
+      <div className="quiz-actions">
+        {revealed ? (
+          <div className="grade-row">
+            {GRADES.map((g) => (
+              <button
+                key={g.id}
+                className={`grade-btn grade-${g.id}`}
+                onClick={() => handleGrade(g.id)}
+              >
+                <span className="grade-label">{g.label}</span>
+                <span className="grade-hint">{intervalHint(card, g.id)}</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <button className="quiz-cta" onClick={() => setRevealed(true)}>
+            답 확인하기
+          </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -149,8 +161,9 @@ function SourceLink({ itemId }) {
 
   if (!item) return null
   return (
-    <Link to={`/items/${item.id}`} className="review-source">
-      출처: {item.title}
+    <Link to={`/items/${item.id}`} className="quiz-source">
+      <IconArchive width={13} height={13} />
+      <span>{item.title}</span>
     </Link>
   )
 }

@@ -211,10 +211,14 @@ async function request(body, timeoutMs = TEXT_TIMEOUT) {
   let busy = null
   let thrown = null
 
-  for (let pass = 0; pass < 2; pass++) {
+  // Free capacity comes back in seconds, not minutes, so a couple of spaced
+  // rounds turn most busy spells into a summary instead of an error.
+  const BACKOFF = [0, 2000, 5000]
+
+  for (let pass = 0; pass < BACKOFF.length; pass++) {
     if (pass > 0) {
       if (!busy) break
-      await wait(2000)
+      await wait(BACKOFF[pass])
     }
     for (const model of modelOrder()) {
       let result
