@@ -1,6 +1,7 @@
 import { buildSummaryPrompt } from './promptTemplate';
 
-const STORAGE_KEY = 'knowledge-archive:items:v1';
+export const ITEMS_KEY = 'knowledge-archive:items:v1';
+const STORAGE_KEY = ITEMS_KEY;
 
 function readAll() {
   try {

@@ -1,6 +1,7 @@
 import { registerPlugin } from '@capacitor/core'
 
-const STORAGE_KEY = 'knowledge-archive:theme:v1'
+export const THEME_KEY = 'knowledge-archive:theme:v1'
+const STORAGE_KEY = THEME_KEY
 
 export const THEMES = [
   {

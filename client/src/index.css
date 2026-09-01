@@ -1257,6 +1257,30 @@ button:disabled {
   flex-shrink: 0;
 }
 
+.key-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.key-status svg {
+  flex-shrink: 0;
+}
+
+.sheet-row {
+  display: flex;
+  gap: 8px;
+}
+
+.sheet-row button {
+  flex: 1;
+  margin: 0;
+}
+
 .test-result {
   margin: 8px 0 0;
   font-size: 13px;

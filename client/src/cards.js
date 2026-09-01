@@ -1,4 +1,5 @@
-const STORAGE_KEY = 'knowledge-archive:cards:v1';
+export const CARDS_KEY = 'knowledge-archive:cards:v1';
+const STORAGE_KEY = CARDS_KEY;
 
 const MIN_EASE = 1.3;
 const MAX_EASE = 2.8;
