@@ -11,6 +11,7 @@ export default function ArchiveList() {
   const [items, setItems] = useState([])
   const [tags, setTags] = useState([])
   const [total, setTotal] = useState(0)
+  const [pendingCount, setPendingCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [theme, setTheme] = useState(getTheme)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -18,10 +19,16 @@ export default function ArchiveList() {
 
   const q = searchParams.get('q') || ''
   const activeTag = searchParams.get('tag') || ''
+  // A busy spell can leave several items unsummarized, and scrolling for them
+  // is the kind of hunting the app is supposed to remove.
+  const pendingOnly = searchParams.get('state') === 'pending'
 
   useEffect(() => {
     store.tags().then(setTags)
-    store.list().then((all) => setTotal(all.length))
+    store.list().then((all) => {
+      setTotal(all.length)
+      setPendingCount(all.filter((it) => !it.summary).length)
+    })
   }, [items.length])
 
   useEffect(() => {
@@ -51,6 +58,8 @@ export default function ArchiveList() {
     setSheetOpen(false)
   }
 
+  const shown = pendingOnly ? items.filter((it) => !it.summary) : items
+
   return (
     <div className="page page-top">
       <div className="list-head">
@@ -73,14 +82,22 @@ export default function ArchiveList() {
         />
       </div>
 
-      {tags.length > 0 && (
+      {(tags.length > 0 || pendingCount > 0 || pendingOnly) && (
         <div className="tag-strip">
           <button
-            className={`tag-chip ${activeTag ? '' : 'active'}`}
-            onClick={() => updateQuery({ tag: '' })}
+            className={`tag-chip ${activeTag || pendingOnly ? '' : 'active'}`}
+            onClick={() => updateQuery({ tag: '', state: '' })}
           >
             전체
           </button>
+          {pendingCount > 0 && (
+            <button
+              className={`tag-chip state-chip ${pendingOnly ? 'active' : ''}`}
+              onClick={() => updateQuery({ state: pendingOnly ? '' : 'pending' })}
+            >
+              요약 전 {pendingCount}
+            </button>
+          )}
           {tags.map((tag) => (
             <button
               key={tag}
@@ -97,21 +114,34 @@ export default function ArchiveList() {
         <p className="hint" style={{ marginTop: 24 }}>
           불러오는 중...
         </p>
-      ) : items.length === 0 ? (
+      ) : shown.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">
             <ArtEmptyArchive />
           </div>
-          <p>{q || activeTag ? '조건에 맞는 지식이 없어요.' : '아직 저장된 지식이 없어요.'}</p>
-          {!q && !activeTag && (
-            <Link to="/add">
-              <button>첫 지식 등록하기</button>
-            </Link>
+          <p>
+            {q || activeTag
+              ? '조건에 맞는 지식이 없어요.'
+              : pendingOnly
+                ? '요약이 안 된 지식이 없어요. 전부 정리돼 있습니다.'
+                : '아직 저장된 지식이 없어요.'}
+          </p>
+          {pendingOnly ? (
+            <button className="quiet" onClick={() => updateQuery({ state: '' })}>
+              전체 보기
+            </button>
+          ) : (
+            !q &&
+            !activeTag && (
+              <Link to="/add">
+                <button>첫 지식 등록하기</button>
+              </Link>
+            )
           )}
         </div>
       ) : (
         <div className="item-list">
-          {groupByDate(items).map((group) => (
+          {groupByDate(shown).map((group) => (
             <Fragment key={`${group.label}-${group.items[0].id}`}>
               <div className="date-group">
                 {group.label} <span>{group.items.length}</span>

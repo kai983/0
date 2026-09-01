@@ -1647,6 +1647,111 @@ button:disabled {
   color: #34d399;
 }
 
+/* ---- 학습 카드 목록 (지식 상세) ----
+   Cards you can see are cards you can fix; a wrong one used to require
+   deleting the whole knowledge item. */
+.card-list {
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.card-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-q {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--text);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.card-a {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.card-due {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-faint);
+}
+
+.card-remove {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  min-height: 0;
+  margin: -6px -10px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-faint);
+}
+
+.card-remove:active {
+  background: var(--pressed-bg);
+  color: var(--danger);
+}
+
+/* The title, while it is being edited, keeps the weight it reads with.
+   Typed selector on purpose - the shared input[type='text'] rule outranks a
+   bare class and would shrink it back to body size. */
+input.title-input {
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+
+/* A state filter is not a tag, so it carries a mark of its own - but an
+   unsummarized item is "not yet", not "broken", so it stays calm. */
+.tag-chip.state-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.tag-chip.state-chip::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--text-faint);
+}
+
+.tag-chip.state-chip.active::before {
+  background: currentColor;
+}
+
+[data-theme='editorial'] .tag-chip.state-chip,
+[data-theme='index'] .tag-chip.state-chip {
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
 /* The retry countdown while a busy model is being waited out. */
 .retry-bar {
   display: flex;

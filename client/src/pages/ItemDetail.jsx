@@ -11,6 +11,7 @@ import {
   IconCards,
   IconCheck,
   IconCopy,
+  IconEdit,
   IconLink,
   IconNote,
   IconSend,
@@ -29,7 +30,10 @@ export default function ItemDetail() {
   const [saving, setSaving] = useState(false)
   const [editingTags, setEditingTags] = useState(false)
   const [tagsInput, setTagsInput] = useState('')
-  const [cardCount, setCardCount] = useState(0)
+  const [cardList, setCardList] = useState([])
+  // Editing the card's own fields - a share captures whatever title YouTube
+  // gave it, and until now that title was permanent.
+  const [editing, setEditing] = useState(null)
   const [cardPrompt, setCardPrompt] = useState('')
   const [cardsPasted, setCardsPasted] = useState('')
   const [cardsCopied, setCardsCopied] = useState(false)
@@ -67,7 +71,7 @@ export default function ItemDetail() {
       })
       .catch(() => setItem(null))
       .finally(() => setLoading(false))
-    cardStore.forItem(id).then((list) => setCardCount(list.length))
+    cardStore.forItem(id).then(setCardList)
   }, [id])
 
   // A share-captured card lands here with autoAi set; summarize it right away.
@@ -126,8 +130,7 @@ export default function ItemDetail() {
       const pairs = parseCards(answer)
       if (!pairs.length) throw new Error('문답을 읽어내지 못했어요. 다시 시도해 주세요.')
       await cardStore.addMany(id, pairs)
-      const list = await cardStore.forItem(id)
-      setCardCount(list.length)
+      setCardList(await cardStore.forItem(id))
     } catch (err) {
       setCardsError({ text: err.message, kind: err.kind || 'error' })
     } finally {
@@ -157,13 +160,32 @@ export default function ItemDetail() {
     setSavingCards(true)
     try {
       await cardStore.addMany(id, parsed)
-      const list = await cardStore.forItem(id)
-      setCardCount(list.length)
+      setCardList(await cardStore.forItem(id))
       setCardsPasted('')
       setCardPrompt('')
     } finally {
       setSavingCards(false)
     }
+  }
+
+  async function removeCard(card) {
+    if (!confirm(`이 카드를 지울까요?\n\n${card.front}`)) return
+    await cardStore.remove(card.id)
+    setCardList(await cardStore.forItem(id))
+  }
+
+  function startEditing() {
+    setEditing({ title: item.title, rawContent: item.raw_content || '' })
+  }
+
+  async function saveEditing() {
+    if (!editing.title.trim()) return
+    const updated = await store.update(id, {
+      title: editing.title,
+      rawContent: editing.rawContent,
+    })
+    setItem(updated)
+    setEditing(null)
   }
 
   async function handleGeneratePrompt() {
@@ -215,8 +237,8 @@ export default function ItemDetail() {
   }
 
   async function handleDelete() {
-    const warning = cardCount
-      ? `이 지식 카드와 여기서 만든 학습 카드 ${cardCount}장을 삭제할까요?`
+    const warning = cardList.length
+      ? `이 지식 카드와 여기서 만든 학습 카드 ${cardList.length}장을 삭제할까요?`
       : '이 지식 카드를 삭제할까요?'
     if (!confirm(warning)) return
     await cardStore.removeForItem(id)
@@ -252,15 +274,32 @@ export default function ItemDetail() {
         title="지식 카드"
         back
         actions={
-          <button className="appbar-icon-btn danger" onClick={handleDelete} aria-label="삭제">
-            <IconTrash width={19} height={19} />
-          </button>
+          <>
+            {!editing && (
+              <button className="appbar-icon-btn" onClick={startEditing} aria-label="제목과 메모 수정">
+                <IconEdit width={19} height={19} />
+              </button>
+            )}
+            <button className="appbar-icon-btn danger" onClick={handleDelete} aria-label="삭제">
+              <IconTrash width={19} height={19} />
+            </button>
+          </>
         }
       />
 
       <div className="page page-detail">
         <div className="detail-header">
-          <h2 className="detail-title">{item.title}</h2>
+          {editing ? (
+            <input
+              type="text"
+              className="title-input"
+              value={editing.title}
+              onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+              placeholder="제목"
+            />
+          ) : (
+            <h2 className="detail-title">{item.title}</h2>
+          )}
           <div className="detail-meta">
             {item.source_type === 'url' ? <IconLink width={13} height={13} /> : <IconNote width={13} height={13} />}
             {new Date(item.created_at).toLocaleDateString('ko-KR')}
@@ -318,9 +357,27 @@ export default function ItemDetail() {
 
         <div className="section">
           <div className="section-label">원문 - 메모</div>
-          <div className={`raw-content-view ${item.raw_content ? '' : 'empty'}`}>
-            {item.raw_content || '원문 없음'}
-          </div>
+          {editing ? (
+            <>
+              <textarea
+                value={editing.rawContent}
+                onChange={(e) => setEditing({ ...editing, rawContent: e.target.value })}
+                placeholder="원문이나 메모"
+              />
+              <div className="tag-edit-row">
+                <button className="block" onClick={saveEditing} disabled={!editing.title.trim()}>
+                  저장
+                </button>
+                <button className="quiet" onClick={() => setEditing(null)}>
+                  취소
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className={`raw-content-view ${item.raw_content ? '' : 'empty'}`}>
+              {item.raw_content || '원문 없음'}
+            </div>
+          )}
         </div>
 
         <div className="section">
@@ -346,19 +403,19 @@ export default function ItemDetail() {
                 요약이 저장됐어요
               </p>
               <p className="next-step-sub">
-                {cardCount > 0
-                  ? `학습 카드 ${cardCount}장이 만들어져 있어요. 학습 탭에서 물어봅니다.`
+                {cardList.length > 0
+                  ? `학습 카드 ${cardList.length}장이 만들어져 있어요. 학습 탭에서 물어봅니다.`
                   : '이제 학습 카드를 만들어 두면, 잊을 때쯤 학습 탭에서 다시 물어봐 줍니다.'}
               </p>
               <div className="next-step-actions">
-                {cardCount === 0 && (
+                {cardList.length === 0 && (
                   <button onClick={runAutoCards} disabled={cardsBusy}>
                     <IconCards width={15} height={15} />
                     {cardsBusy ? '만드는 중...' : '학습 카드 만들기'}
                   </button>
                 )}
-                <button className="quiet" onClick={() => navigate(cardCount > 0 ? '/review' : '/')}>
-                  {cardCount > 0 ? '학습하러 가기' : '저장소로 돌아가기'}
+                <button className="quiet" onClick={() => navigate(cardList.length > 0 ? '/review' : '/')}>
+                  {cardList.length > 0 ? '학습하러 가기' : '저장소로 돌아가기'}
                 </button>
               </div>
             </div>
@@ -499,13 +556,35 @@ export default function ItemDetail() {
             학습 카드
           </div>
 
-          {cardCount > 0 && !cardPrompt && (
-            <p className="hint" style={{ marginBottom: 12 }}>
-              이 지식으로 만든 카드 {cardCount}장이 학습 탭에서 복습됩니다.
-            </p>
+          {cardList.length > 0 && !cardPrompt && (
+            <>
+              <p className="hint" style={{ marginBottom: 10 }}>
+                이 지식으로 만든 카드 {cardList.length}장이 학습 탭에서 복습됩니다.
+              </p>
+              {/* Seeing the cards is what makes a bad one fixable - until now a
+                  single wrong card could only be removed by deleting the item. */}
+              <ul className="card-list">
+                {cardList.map((c) => (
+                  <li key={c.id} className="card-row">
+                    <div className="card-text">
+                      <p className="card-q">{c.front}</p>
+                      <p className="card-a">{c.back}</p>
+                      <p className="card-due">{cardStateText(c)}</p>
+                    </div>
+                    <button
+                      className="card-remove"
+                      onClick={() => removeCard(c)}
+                      aria-label="이 카드 지우기"
+                    >
+                      <IconTrash width={15} height={15} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
 
-          {cardCount === 0 && !cardPrompt && (
+          {cardList.length === 0 && !cardPrompt && (
             <p className="hint" style={{ marginBottom: 12 }}>
               문답 카드를 만들어 두면 학습 탭에서 간격을 두고 다시 물어봅니다.
             </p>
@@ -526,18 +605,18 @@ export default function ItemDetail() {
               button, so down here it steps aside rather than competing. */}
           {!cardPrompt && !cardsBusy && hasAiKey() && (
             <button
-              className={`block ${item.summary && cardCount === 0 ? 'quiet' : ''}`}
+              className={`block ${item.summary && cardList.length === 0 ? 'quiet' : ''}`}
               style={{ marginBottom: 8 }}
               onClick={runAutoCards}
             >
               <IconCards width={16} height={16} />
-              {cardCount > 0 ? '카드 자동으로 더 만들기' : '학습 카드 자동 생성'}
+              {cardList.length > 0 ? '카드 자동으로 더 만들기' : '학습 카드 자동 생성'}
             </button>
           )}
           {!cardPrompt && cardsBusy ? null : !cardPrompt ? (
             <button className="block quiet" onClick={handleGenerateCards}>
               <IconCards width={16} height={16} />
-              {hasAiKey() ? '수동으로 만들기' : cardCount > 0 ? '카드 더 만들기' : '학습 카드 만들기'}
+              {hasAiKey() ? '수동으로 만들기' : cardList.length > 0 ? '카드 더 만들기' : '학습 카드 만들기'}
             </button>
           ) : (
             <>
@@ -609,4 +688,14 @@ export default function ItemDetail() {
       </div>
     </>
   )
+}
+
+/** Where this card sits in the schedule, in the words the review screen uses.
+    Due date first: grading 다시 resets reps to 0, so a card with a long history
+    would otherwise be announced as brand new the moment it is failed. */
+function cardStateText(card) {
+  const days = Math.ceil((new Date(card.due) - Date.now()) / 86400000)
+  if (days <= 0) return card.reps || card.lapses ? '지금 복습할 차례' : '새 카드'
+  if (days === 1) return '내일 다시'
+  return `${days}일 뒤 다시`
 }
