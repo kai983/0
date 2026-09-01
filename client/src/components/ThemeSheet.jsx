@@ -1,17 +1,29 @@
 import { useState } from 'react'
 import { THEMES } from '../theme'
-import { aiKey } from '../ai'
+import { aiKey, testAiConnection } from '../ai'
 import { IconCheck } from '../icons'
 
 /** Bottom sheet with the theme picker and the AI settings. */
 export default function ThemeSheet({ current, onPick, onClose }) {
   const [key, setKey] = useState(aiKey.stored())
   const [savedTick, setSavedTick] = useState(false)
+  const [testing, setTesting] = useState(false)
+  const [result, setResult] = useState(null)
 
   function saveKey() {
     aiKey.set(key)
     setSavedTick(true)
+    setResult(null)
     setTimeout(() => setSavedTick(false), 1500)
+  }
+
+  async function runTest() {
+    setTesting(true)
+    setResult(null)
+    // Save first, so the test uses the key that is on screen.
+    aiKey.set(key)
+    setResult(await testAiConnection())
+    setTesting(false)
   }
 
   return (
@@ -72,6 +84,13 @@ export default function ThemeSheet({ current, onPick, onClose }) {
             {savedTick ? <IconCheck width={16} height={16} /> : '저장'}
           </button>
         </div>
+
+        <button className="block quiet" style={{ marginTop: 8 }} onClick={runTest} disabled={testing}>
+          {testing ? '확인 중...' : '연결 테스트'}
+        </button>
+        {result && (
+          <p className={`test-result ${result.ok ? 'ok' : 'bad'}`}>{result.text}</p>
+        )}
 
         <p className="sheet-version">버전 {__APP_VERSION__}</p>
       </div>

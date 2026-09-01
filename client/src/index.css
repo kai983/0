@@ -1195,6 +1195,22 @@ button:disabled {
   flex-shrink: 0;
 }
 
+.test-result {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.test-result.ok {
+  color: var(--accent);
+}
+
+.test-result.bad {
+  color: var(--danger);
+}
+
 .sheet-version {
   margin: 16px 0 0;
   text-align: center;
