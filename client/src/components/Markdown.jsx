@@ -7,10 +7,17 @@
 // Split on the inline marks in one pass so the parts stay in order.
 const INLINE = /(\*\*[^*\n]+\*\*|\*[^*\n]+\*|__[^_\n]+__|_[^_\n]+_|`[^`\n]+`)/g
 
+/**
+ * Marks that survived parsing - an unclosed ** or a stray * - are never shown
+ * to the reader. The formatting is lost, the asterisks are not printed.
+ */
+function stripMarks(text) {
+  return text.replace(/\*\*|__/g, '')
+}
+
 /** Turns one line of text into React nodes, keeping the marks out of the output. */
 function inline(text) {
   const parts = text.split(INLINE).filter(Boolean)
-  if (parts.length === 1) return text
 
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
@@ -28,7 +35,7 @@ function inline(text) {
     ) {
       return <em key={i}>{part.slice(1, -1)}</em>
     }
-    return part
+    return stripMarks(part)
   })
 }
 
@@ -61,6 +68,13 @@ export default function Markdown({ text }) {
     if (/^\*\*[^*]+\*\*:?$/.test(line)) {
       flushBullets()
       blocks.push({ type: 'heading', text: line.replace(/^\*\*|\*\*:?$/g, '') })
+      return
+    }
+    // "- **소제목**" is how the model writes a section label inside a list.
+    // It is a heading wearing a bullet, so it is shown as one.
+    if (/^[-*•]\s+\*\*[^*]+\*\*:?$/.test(line)) {
+      flushBullets()
+      blocks.push({ type: 'heading', text: line.replace(/^[-*•]\s*\*\*|\*\*:?$/g, '') })
       return
     }
     if (/^[-*•]\s/.test(line)) {
