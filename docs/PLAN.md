@@ -3,6 +3,7 @@
 기준 버전 v1.21 - 갱신일 2026-09-01 - 상태: 기능 완성 - 디자인 디벨롭 반영 - 플랫폼 Android (Galaxy S23 Ultra)
 
 정식 문서(디자인 반영본): https://claude.ai/code/artifact/9929f461-51db-49a7-b6c6-ec5e16affef6
+의도 지도(요구를 네 겹으로 구조화): https://claude.ai/code/artifact/08eb30f7-2275-4602-9c8c-f6106fa1d66c
 
 ## 1. 제품 정의
 
