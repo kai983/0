@@ -31,8 +31,12 @@ public class ShareTargetPlugin extends Plugin {
     public void onNewShare(Intent intent) {
         handle(intent);
         if (pending != null) {
-            notifyListeners(EVENT, pending);
-            pending = null;
+            // Retain the event: the WebView may be reloading or backgrounded, and
+            // an unretained one is dropped when no listener is attached yet.
+            notifyListeners(EVENT, pending, true);
+            // Deliberately keep `pending` for consume() as well. If the listener
+            // never runs, the share is still recoverable rather than lost, and
+            // consume() is what clears it.
         }
     }
 

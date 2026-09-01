@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { THEMES } from '../theme'
 import { aiKey, testAiConnection } from '../ai'
 import { exportBackup, importBackup, lastBackupAt, parseBackup } from '../backup'
+import { shareDiagnostic } from '../sharing'
 import { IconCheck } from '../icons'
 
 function backupAgeText(iso) {
@@ -22,6 +23,7 @@ export default function ThemeSheet({ current, onPick, onClose }) {
   const [backupResult, setBackupResult] = useState(null)
   const [lastBackup, setLastBackup] = useState(lastBackupAt)
   const [usingOwnKey, setUsingOwnKey] = useState(() => Boolean(aiKey.stored()))
+  const [shareInfo] = useState(shareDiagnostic)
   const fileInput = useRef(null)
 
   async function runExport() {
@@ -171,6 +173,19 @@ export default function ThemeSheet({ current, onPick, onClose }) {
         {backupResult && (
           <p className={`test-result ${backupResult.ok ? 'ok' : 'bad'}`}>{backupResult.text}</p>
         )}
+
+        <h2 className="sheet-title" style={{ marginTop: 24 }}>
+          공유 상태
+        </h2>
+        <p className="sheet-sub">
+          유튜브나 브라우저에서 공유할 때 이 앱이 무엇을 받았는지 보여줍니다. 공유해도 아무 일이
+          없을 때 여기를 확인하세요.
+        </p>
+        <p className={`test-result share-status ${shareInfo?.stage === '연결 실패' ? 'bad' : 'ok'}`}>
+          {shareInfo
+            ? `${shareInfo.stage} - ${shareInfo.detail} (${new Date(shareInfo.at).toLocaleString('ko-KR')})`
+            : '아직 기록이 없어요. 공유를 한 번 해본 뒤 다시 열어 보세요.'}
+        </p>
 
         <p className="sheet-version">버전 {__APP_VERSION__}</p>
       </div>

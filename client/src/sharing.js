@@ -1,4 +1,4 @@
-import { registerPlugin } from '@capacitor/core'
+import { Capacitor, registerPlugin } from '@capacitor/core'
 import { Share } from '@capacitor/share'
 
 const PENDING_KEY = 'knowledge-archive:pending-ai:v1'
@@ -86,13 +86,46 @@ function target() {
   return ShareTarget
 }
 
+const DIAG_KEY = 'knowledge-archive:share-diag:v1'
+
+/**
+ * A share that goes nowhere leaves no trace to debug, so each attempt records
+ * what happened. The settings screen reads this back.
+ */
+function noteShare(stage, detail) {
+  try {
+    localStorage.setItem(DIAG_KEY, JSON.stringify({ stage, detail, at: new Date().toISOString() }))
+  } catch {
+    // Diagnostics are best effort.
+  }
+}
+
+/** What the last share attempt did, for the settings screen. */
+export function shareDiagnostic() {
+  try {
+    const raw = localStorage.getItem(DIAG_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
 /** Reads a share that launched the app, if any. */
 export async function consumeShare() {
   try {
     const { value } = await target().consume()
+    if (value) noteShare('받음', '앱이 켜질 때 공유를 받았어요')
+    else noteShare('대기', '플러그인은 연결됐고, 받은 공유는 없어요')
     return value || null
-  } catch {
-    // Not running as a share target (plain browser); nothing was shared.
+  } catch (err) {
+    // In a browser there is no native plugin, which is expected rather than
+    // broken. On a device this is the failure that looks like "nothing
+    // happened", so it is the one worth reporting.
+    if (Capacitor.isNativePlatform()) {
+      noteShare('연결 실패', err?.message || '공유 플러그인에 연결하지 못했어요')
+    } else {
+      noteShare('웹', '브라우저에서는 앱 공유 기능이 동작하지 않아요')
+    }
     return null
   }
 }
@@ -101,10 +134,20 @@ export async function consumeShare() {
 export function onShare(handler) {
   let remove = () => {}
   target()
-    .addListener('shareReceived', handler)
+    .addListener('shareReceived', (value) => {
+      noteShare('받음', '앱이 켜져 있는 동안 공유를 받았어요')
+      // The native side retains the payload so it cannot be lost; clearing it
+      // here keeps the next launch from replaying the same share.
+      target().consume().catch(() => {})
+      handler(value)
+    })
     .then((h) => {
       remove = () => h.remove()
     })
-    .catch(() => {})
+    .catch((err) => {
+      if (Capacitor.isNativePlatform()) {
+        noteShare('연결 실패', err?.message || '공유 이벤트를 구독하지 못했어요')
+      }
+    })
   return () => remove()
 }
