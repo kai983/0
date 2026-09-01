@@ -1,15 +1,31 @@
 {
   "artboards": [
-    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "저장소 목록" },
-    { "file": "Detail.dc.html", "x": 490, "y": 0, "w": 390, "h": 844, "title": "지식 상세" },
-    { "file": "Learn.dc.html", "x": 980, "y": 0, "w": 390, "h": 844, "title": "학습" },
-    { "file": "Settings.dc.html", "x": 1470, "y": 0, "w": 390, "h": 844, "title": "설정" },
-    { "file": "AppIcon.dc.html", "x": 0, "y": 980, "w": 880, "h": 620, "title": "런처 아이콘" },
-    { "file": "IconSet.dc.html", "x": 980, "y": 980, "w": 880, "h": 520, "title": "아이콘 세트" }
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "저장소 목록", "page": "page-1" },
+    { "file": "Detail.dc.html", "x": 490, "y": 0, "w": 390, "h": 844, "title": "지식 상세", "page": "page-1" },
+    { "file": "Learn.dc.html", "x": 980, "y": 0, "w": 390, "h": 844, "title": "학습", "page": "page-1" },
+    { "file": "Settings.dc.html", "x": 1470, "y": 0, "w": 390, "h": 844, "title": "설정", "page": "page-1" },
+    { "file": "AppIcon.dc.html", "x": 0, "y": 980, "w": 880, "h": 620, "title": "런처 아이콘", "page": "page-1" },
+    { "file": "IconSet.dc.html", "x": 980, "y": 980, "w": 880, "h": 520, "title": "아이콘 세트", "page": "page-1" },
+    { "file": "TossList.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "토스풍 - 목록", "page": "page-2" },
+    { "file": "TossDetail.dc.html", "x": 490, "y": 0, "w": 390, "h": 844, "title": "토스풍 - 상세", "page": "page-2" },
+    { "file": "EditorialList.dc.html", "x": 1180, "y": 0, "w": 390, "h": 844, "title": "편집형 - 목록", "page": "page-2" },
+    { "file": "EditorialDetail.dc.html", "x": 1670, "y": 0, "w": 390, "h": 844, "title": "편집형 - 상세", "page": "page-2" },
+    { "file": "IndexList.dc.html", "x": 0, "y": 1150, "w": 390, "h": 844, "title": "인덱스형 - 목록", "page": "page-2" },
+    { "file": "IndexDetail.dc.html", "x": 490, "y": 1150, "w": 390, "h": 844, "title": "인덱스형 - 상세", "page": "page-2" },
+    { "file": "ImmersiveList.dc.html", "x": 1180, "y": 1150, "w": 390, "h": 844, "title": "몰입형 - 목록", "page": "page-2" },
+    { "file": "ImmersiveDetail.dc.html", "x": 1670, "y": 1150, "w": 390, "h": 844, "title": "몰입형 - 상세", "page": "page-2" }
   ],
   "annotations": [
-    { "id": "basis", "x": 0, "y": -190, "w": 560, "text": "리서치 근거\n- 태그는 알약이 아니라 6px 모서리 (국내 시스템 관행)\n- 본문 16/22, 읽기 화면만 1.7로 늘림 (한글은 세로 공간을 더 먹음)\n- 그림자 대신 1px 선, 12px 모서리를 기본값으로\n- 그라디언트는 AI 표시에만" },
-    { "id": "icon-note", "x": 0, "y": 1650, "w": 560, "text": "런처 아이콘\nA안(책갈피)이 권장. 채워진 단일 형태라 어떤 마스크에도 버티고, 단색으로 바뀌어도 형태가 남습니다.\n안드로이드 16부터 모노크롬을 안 넣으면 시스템이 알아서 단색화하므로 직접 그려 넣습니다." }
+    { "id": "basis", "x": 0, "y": -190, "w": 560, "page": "page-1", "text": "리서치 근거\n- 태그는 알약이 아니라 6px 모서리 (국내 시스템 관행)\n- 본문 16/22, 읽기 화면만 1.7로 늘림 (한글은 세로 공간을 더 먹음)\n- 그림자 대신 1px 선, 12px 모서리를 기본값으로\n- 그라디언트는 AI 표시에만" },
+    { "id": "icon-note", "x": 0, "y": 1650, "w": 560, "page": "page-1", "text": "런처 아이콘\nA안(책갈피)이 권장. 채워진 단일 형태라 어떤 마스크에도 버티고, 단색으로 바뀌어도 형태가 남습니다.\n안드로이드 16부터 모노크롬을 안 넣으면 시스템이 알아서 단색화하므로 직접 그려 넣습니다." },
+    { "id": "toss-note", "x": 0, "y": -240, "w": 470, "page": "page-2", "text": "토스풍 디벨롭 - 토스(TDS), Revolut 참고\n- 회색 카드 대신 전면 행: 여백으로만 구분, 테두리 없음\n- 누르면 회색으로 물들며 0.98로 살짝 줄어드는 토스 특유의 눌림 (두 번째 행이 눌린 상태)\n- 칩을 알약에서 8px 각진 형태로 (토스 실제 문법)\n- 화면당 파란 요소는 하나만 - 절제가 토스다움" },
+    { "id": "editorial-note", "x": 1180, "y": -240, "w": 470, "page": "page-2", "text": "편집형 디벨롭 - Readwise Reader, NYT, 가디언 참고\n- 본명조(Noto Serif KR) 제목 + 프리텐다드 UI 세리프 페어링\n- 헤어라인 1px과 여백으로만 구분, 카드 없음\n- 메타데이터는 자간을 넓힌 11px 라벨\n- 첫 문장 위 24px 테라코타 리드 규칙 - 한글판 드롭캡\n- 읽기 본문 16px/1.8, 단어 단위 줄바꿈" },
+    { "id": "index-note", "x": 0, "y": 900, "w": 470, "page": "page-2", "text": "인덱스형 디벨롭 - Linear, Things 3 참고\n- 48px 장부 행: 제목은 한 줄 말줄임, 날짜는 오른쪽 고정 열로 세로 정렬 (tabular-nums)\n- 출처는 8px 색점 - 채도를 낮춘 안료색\n- 구분선은 텍스트 시작선까지 들여서\n- 날짜 그룹 헤더에 개수 표시" },
+    { "id": "immersive-note", "x": 1180, "y": 900, "w": 470, "page": "page-2", "text": "몰입형 디벨롭 - Spotify, Linear 다크 참고\n- 표면 사다리: 바탕 #0B0C0E - 카드 #141519 - 눌림 #22242A (두 번째 카드가 눌린 상태)\n- 테두리 없이 밝기 단계로만 깊이 표현\n- 상세 상단에 앰버 글로우 하나 (Spotify 재생 화면의 분위기)\n- 다크에서는 굵기 한 단계 내림 (700 대신 600), 본문 흰색 92%" }
   ],
-  "launch": { "view": "canvas" }
+  "pages": [
+    { "id": "page-1", "name": "1차 리디자인 (v1.1)" },
+    { "id": "page-2", "name": "테마 디벨롭" }
+  ],
+  "launch": { "view": "canvas", "page": "page-2" }
 }
