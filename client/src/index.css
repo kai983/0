@@ -291,7 +291,7 @@
   --item-pad: 15px 0;
   --item-gap: 0px;
   --item-bg: transparent;
-  --item-radius: 0;
+  --item-radius: 12px;
   --item-divider: none;
   --item-title-size: 16px;
   --item-title-weight: 600;
@@ -687,7 +687,6 @@ a {
   align-items: center;
   column-gap: 10px;
   min-height: 48px;
-  border-bottom: none;
 }
 
 [data-theme='index'] .item-card::after {
@@ -786,7 +785,6 @@ a {
 }
 
 [data-theme='toss'] .item-card {
-  border-radius: 12px;
   transition:
     transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     background-color 0.25s ease-out,
@@ -1554,7 +1552,7 @@ button:disabled {
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(20, 19, 15, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: flex-end;
 }

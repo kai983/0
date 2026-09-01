@@ -110,7 +110,7 @@ export default function ArchiveList() {
       ) : (
         <div className="item-list">
           {groupByDate(items).map((group) => (
-            <Fragment key={group.label}>
+            <Fragment key={`${group.label}-${group.items[0].id}`}>
               <div className="date-group">
                 {group.label} <span>{group.items.length}</span>
               </div>
@@ -174,12 +174,13 @@ function SourceGlyph({ kind }) {
 }
 
 /** "오늘 - 어제 - N일 전 - 지난주"; anything older reads as a plain date.
-    Derived from dateBucket so it can never disagree with the group headers. */
+    Week words defer to dateBucket so they can't disagree with the ledger. */
 function relativeDate(iso) {
-  const bucket = dateBucket(iso)
-  if (bucket === '이번 주') return `${daysSince(iso)}일 전`
-  if (bucket === '이전') return formatDate(iso)
-  return bucket
+  const days = daysSince(iso)
+  if (days <= 0) return '오늘'
+  if (days === 1) return '어제'
+  if (days < 7) return `${days}일 전`
+  return dateBucket(iso) === '지난주' ? '지난주' : formatDate(iso)
 }
 
 function groupByDate(items) {
@@ -200,8 +201,11 @@ function formatDate(iso) {
   ).padStart(2, '0')}.`
 }
 
-/** The index ledger's date column - zero-padded so the digits line up. */
+/** The index ledger's date column - zero-padded so the digits line up, and
+    carrying a two-digit year once the item is no longer from this year. */
 function formatShortDate(iso) {
   const d = new Date(iso)
-  return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+  const md = `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+  if (d.getFullYear() === new Date().getFullYear()) return md
+  return `${String(d.getFullYear()).slice(2)}.${md}`
 }
