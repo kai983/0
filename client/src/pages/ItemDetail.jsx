@@ -298,9 +298,11 @@ export default function ItemDetail() {
         </div>
 
         <div className="section">
-          <div className="section-label">
-            <IconSparkle width={14} height={14} />
-            AI 재가공
+          <div className="ai-label">
+            <span className="ai-badge">
+              <IconSparkle width={11} height={11} />
+            </span>
+            AI 요약
           </div>
 
           {item.summary && !prompt && (

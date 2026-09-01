@@ -219,24 +219,24 @@
   --chip-gap: 7px;
 
   --item-layout: stack;
-  --item-pad: 18px;
-  --item-gap: 10px;
-  --item-bg: #f9fafb;
-  --item-radius: 16px;
+  --item-pad: 14px 16px;
+  --item-gap: 2px;
+  --item-bg: transparent;
+  --item-radius: 12px;
   --item-divider: none;
-  --item-title-size: 17px;
+  --item-title-size: 16px;
   --item-title-weight: 700;
-  --item-title-spacing: -0.03em;
-  --item-title-lh: 1.45;
+  --item-title-spacing: -0.02em;
+  --item-title-lh: 1.375;
   --item-excerpt-size: 14px;
-  --item-excerpt-lh: 1.6;
+  --item-excerpt-lh: 1.5;
   --item-excerpt-lines: 2;
 
-  --tag-bg: #f2f4f6;
+  --tag-bg: #eef1f4;
   --tag-color: #6b7684;
-  --tag-pad: 4px 10px;
-  --tag-radius: 999px;
-  --tag-size: 11.5px;
+  --tag-pad: 3px 8px;
+  --tag-radius: 6px;
+  --tag-size: 12px;
   --tag-sep: '';
 
   --card-bg: #f9fafb;
@@ -571,13 +571,23 @@ a {
   line-height: 1.5;
 }
 
-.item-meta .dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.55;
+.item-source-glyph {
   flex-shrink: 0;
+  opacity: 0.85;
+}
+
+[data-theme='index'] .item-source-glyph {
+  display: none;
+}
+
+/* The pressed row pulls in and rounds, instead of flashing a full-bleed bar. */
+[data-theme='toss'] .item-card:active {
+  background: #f2f4f6;
+  border-radius: 10px;
+  margin-left: 6px;
+  margin-right: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .date-short {
@@ -592,9 +602,13 @@ a {
   display: none;
 }
 
-.item-state.done {
-  color: var(--accent);
-  font-weight: 700;
+.item-state {
+  margin-left: 2px;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--text-muted) 12%, var(--bg));
+  font-size: 10.5px;
+  font-weight: 600;
 }
 
 [data-theme='index'] .item-meta {
@@ -602,7 +616,6 @@ a {
   padding-top: 2px;
 }
 
-[data-theme='index'] .item-meta .dot,
 [data-theme='index'] .item-state {
   display: none;
 }
@@ -668,6 +681,39 @@ a {
   content: var(--tag-sep);
   margin-right: 4px;
   opacity: 0.75;
+}
+
+/* Gradient appears in exactly one role: marking what AI did. */
+:root {
+  --ai-a: #4593ff;
+  --ai-b: #5b5ff0;
+}
+
+.ai-badge {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, var(--ai-a), var(--ai-b));
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ai-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ai-b);
+}
+
+[data-theme='immersive'] .ai-label {
+  color: #9a9dff;
 }
 
 .empty-state {
@@ -994,21 +1040,38 @@ button:disabled {
 /* ---------- Markdown summary ---------- */
 
 .markdown-heading {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  margin: 20px 0 8px;
-  color: var(--text);
+  letter-spacing: 0.02em;
+  margin: 22px 0 10px;
+  color: var(--text-muted);
 }
 
 .markdown-heading:first-child {
   margin-top: 0;
 }
 
+/* The first section is the one-line summary - it reads as the lede. */
+.markdown-heading:first-child + .markdown-paragraph {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.markdown-subheading {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 14px 0 5px;
+  color: var(--text);
+}
+
 .markdown-paragraph {
   margin: 0 0 10px;
-  line-height: 1.75;
-  font-size: 14.5px;
+  line-height: 1.7;
+  font-size: 16px;
 }
 
 .markdown-list {
@@ -1022,7 +1085,7 @@ button:disabled {
   margin-bottom: 6px;
   padding-left: 14px;
   line-height: 1.7;
-  font-size: 14.5px;
+  font-size: 16px;
 }
 
 .markdown strong {
@@ -1104,44 +1167,61 @@ button:disabled {
 .grade-btn {
   flex-direction: column;
   gap: 2px;
-  min-height: 62px;
+  min-height: 56px;
   padding: 10px 4px;
   border-radius: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  border: none;
+  background: color-mix(in srgb, var(--text-muted) 10%, var(--bg));
   color: var(--text);
 }
 
 .grade-label {
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .grade-hint {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
-  color: var(--text-faint);
+  opacity: 0.72;
+  font-variant-numeric: tabular-nums;
 }
 
 .grade-btn.grade-again {
-  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, var(--bg));
   color: var(--danger);
 }
 
-.grade-btn.grade-again .grade-hint {
-  color: var(--danger);
-  opacity: 0.7;
+.grade-btn.grade-hard {
+  background: color-mix(in srgb, #d97706 12%, var(--bg));
+  color: #d97706;
+}
+
+.grade-btn.grade-good {
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  color: var(--accent-ink);
 }
 
 .grade-btn.grade-easy {
-  border-color: var(--accent);
-  color: var(--accent-ink);
+  background: color-mix(in srgb, #12b76a 14%, var(--bg));
+  color: #12b76a;
 }
 
-.grade-btn.grade-easy .grade-hint {
-  color: var(--accent-ink);
-  opacity: 0.7;
+.review-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--text-muted) 12%, var(--bg));
+  overflow: hidden;
+  margin: 4px 0 18px;
+}
+
+.review-progress i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width 0.25s ease-out;
 }
 
 .review-source {
@@ -1172,17 +1252,32 @@ button:disabled {
 .sheet {
   width: 100%;
   background: var(--bg);
-  border-radius: 20px 20px 0 0;
-  padding: 20px 20px calc(20px + var(--safe-bottom));
+  border-radius: 24px 24px 0 0;
+  padding: 8px 20px calc(20px + var(--safe-bottom));
   max-height: 88vh;
   overflow-y: auto;
 }
 
-.sheet-title {
+.sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--text-muted) 30%, var(--bg));
+  margin: 0 auto 16px;
+}
+
+.sheet-head {
   margin: 0 0 4px;
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.03em;
+}
+
+.sheet-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
 }
 
 .sheet-sub {
@@ -1191,32 +1286,37 @@ button:disabled {
   color: var(--text-muted);
 }
 
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
 .theme-option {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
   width: 100%;
-  padding: 14px;
-  margin-bottom: 8px;
-  border-radius: 14px;
+  padding: 12px 4px 10px;
+  border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--card-bg);
-  text-align: left;
-  min-height: 68px;
-  justify-content: flex-start;
+  background: transparent;
+  min-height: 44px;
   font-weight: 500;
   color: var(--text);
+  position: relative;
 }
 
 .theme-option.active {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-soft);
+  border: 1.5px solid var(--accent);
+  padding: 11.5px 3.5px 9.5px;
 }
 
 .theme-swatch {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   flex-shrink: 0;
   display: flex;
@@ -1233,29 +1333,22 @@ button:disabled {
 }
 
 .theme-option-text {
-  flex: 1;
   min-width: 0;
+  text-align: center;
 }
 
 .theme-option-name {
   display: block;
-  font-size: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.theme-option.active .theme-option-name {
   font-weight: 700;
-  letter-spacing: -0.02em;
 }
 
-.theme-option-tagline {
-  display: block;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
 
-.theme-check {
-  color: var(--accent);
-  flex-shrink: 0;
-}
 
 .key-status {
   display: flex;

@@ -64,17 +64,17 @@ export default function Markdown({ text }) {
       blocks.push({ type: 'heading', text: line.replace(/^#{1,6}\s*/, '') })
       return
     }
-    // A lone "**제목**" line is a heading in everything but syntax.
+    // A lone "**제목**" line is a subheading in everything but syntax.
     if (/^\*\*[^*]+\*\*:?$/.test(line)) {
       flushBullets()
-      blocks.push({ type: 'heading', text: line.replace(/^\*\*|\*\*:?$/g, '') })
+      blocks.push({ type: 'subheading', text: line.replace(/^\*\*|\*\*:?$/g, '') })
       return
     }
     // "- **소제목**" is how the model writes a section label inside a list.
     // It is a heading wearing a bullet, so it is shown as one.
     if (/^[-*•]\s+\*\*[^*]+\*\*:?$/.test(line)) {
       flushBullets()
-      blocks.push({ type: 'heading', text: line.replace(/^[-*•]\s*\*\*|\*\*:?$/g, '') })
+      blocks.push({ type: 'subheading', text: line.replace(/^[-*•]\s*\*\*|\*\*:?$/g, '') })
       return
     }
     if (/^[-*•]\s/.test(line)) {
@@ -94,6 +94,13 @@ export default function Markdown({ text }) {
             <h3 key={i} className="markdown-heading">
               {inline(block.text)}
             </h3>
+          )
+        }
+        if (block.type === 'subheading') {
+          return (
+            <h4 key={i} className="markdown-subheading">
+              {inline(block.text)}
+            </h4>
           )
         }
         if (block.type === 'list') {

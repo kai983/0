@@ -3,7 +3,8 @@ import { THEMES } from '../theme'
 import { aiKey, testAiConnection } from '../ai'
 import { exportBackup, importBackup, lastBackupAt, parseBackup } from '../backup'
 import { shareDiagnostic } from '../sharing'
-import { IconCheck } from '../icons'
+import { IconCheck, IconExport, IconImport } from '../icons'
+import { daysSince } from '../dates'
 
 /** Enough of a key to recognise it, without putting the whole secret on screen. */
 function maskKey(value) {
@@ -13,7 +14,7 @@ function maskKey(value) {
 
 function backupAgeText(iso) {
   if (!iso) return '아직 백업한 적이 없어요.'
-  const days = Math.floor((Date.now() - new Date(iso)) / 86400000)
+  const days = daysSince(iso)
   const date = new Date(iso).toLocaleDateString('ko-KR')
   if (days <= 0) return `마지막 백업 - 오늘 (${date})`
   return `마지막 백업 - ${days}일 전 (${date})`
@@ -100,9 +101,13 @@ export default function ThemeSheet({ current, onPick, onClose }) {
   return (
     <div className="sheet-backdrop" onClick={onClose} role="presentation">
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
-        <h2 className="sheet-title">테마</h2>
-        <p className="sheet-sub">같은 내용을 다른 밀도와 색으로 봅니다.</p>
+        <div className="sheet-handle"></div>
+        <h2 className="sheet-head">설정</h2>
 
+        <h2 className="sheet-title" style={{ marginTop: 18 }}>
+          테마
+        </h2>
+        <div className="theme-options">
         {THEMES.map((theme) => (
           <button
             key={theme.id}
@@ -116,15 +121,10 @@ export default function ThemeSheet({ current, onPick, onClose }) {
             </span>
             <span className="theme-option-text">
               <span className="theme-option-name">{theme.name}</span>
-              <span className="theme-option-tagline">{theme.tagline}</span>
             </span>
-            {current === theme.id && (
-              <span className="theme-check">
-                <IconCheck width={20} height={20} />
-              </span>
-            )}
           </button>
         ))}
+        </div>
 
         <h2 className="sheet-title" style={{ marginTop: 24 }}>
           자동 AI 요약
@@ -190,9 +190,11 @@ export default function ThemeSheet({ current, onPick, onClose }) {
         </p>
         <div className="sheet-row">
           <button className="quiet" onClick={runExport} disabled={backupBusy}>
+            <IconExport width={16} height={16} />
             {backupBusy ? '처리 중...' : '내보내기'}
           </button>
           <button className="quiet" onClick={() => fileInput.current?.click()} disabled={backupBusy}>
+            <IconImport width={16} height={16} />
             가져오기
           </button>
         </div>

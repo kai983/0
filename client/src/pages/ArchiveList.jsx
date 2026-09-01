@@ -3,7 +3,9 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { excerptOf, store } from '../store'
 import ThemeSheet from '../components/ThemeSheet.jsx'
 import { applyTheme, getTheme } from '../theme'
-import { IconPalette, IconSearch } from '../icons'
+import { IconLink, IconNote, IconPalette, IconSearch, IconVideo } from '../icons'
+import { isVideoSource } from '../ai'
+import { daysSince } from '../dates'
 
 export default function ArchiveList() {
   const [items, setItems] = useState([])
@@ -116,12 +118,12 @@ export default function ArchiveList() {
                 className={`item-card ${item.summary ? '' : 'pending'}`}
               >
                 <div className="item-meta">
-                  <span className="date-full">{formatDate(item.updated_at)}</span>
-                  <span className="date-short">{formatShortDate(item.updated_at)}</span>
-                  <span className="dot"></span>
-                  <span className={`item-state ${item.summary ? 'done' : ''}`}>
-                    {item.summary ? 'AI 요약' : '요약 전'}
+                  <SourceGlyph kind={sourceKind(item)} />
+                  <span className="date-full">
+                    {SOURCE_LABEL[sourceKind(item)]} · {relativeDate(item.updated_at)}
                   </span>
+                  <span className="date-short">{formatShortDate(item.updated_at)}</span>
+                  {!item.summary && <span className="item-state">요약 전</span>}
                 </div>
                 <h2 className="item-title">{item.title}</h2>
                 {excerpt && <p className="item-excerpt">{excerpt}</p>}
@@ -145,6 +147,31 @@ export default function ArchiveList() {
       )}
     </div>
   )
+}
+
+const SOURCE_LABEL = { video: '유튜브', link: '기사', note: '메모' }
+
+function sourceKind(item) {
+  if (isVideoSource(item.source_url)) return 'video'
+  if (item.source_url) return 'link'
+  return 'note'
+}
+
+function SourceGlyph({ kind }) {
+  const props = { width: 13, height: 13, className: 'item-source-glyph' }
+  if (kind === 'video') return <IconVideo {...props} />
+  if (kind === 'link') return <IconLink {...props} />
+  return <IconNote {...props} />
+}
+
+/** "오늘 - 어제 - N일 전 - 지난주"; anything older reads as a plain date. */
+function relativeDate(iso) {
+  const days = daysSince(iso)
+  if (days <= 0) return '오늘'
+  if (days === 1) return '어제'
+  if (days < 7) return `${days}일 전`
+  if (days < 14) return '지난주'
+  return formatDate(iso)
 }
 
 function formatDate(iso) {

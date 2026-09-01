@@ -1,10 +1,15 @@
+/**
+ * One consistent set: 24px grid, 2px stroke, round caps and joins.
+ * The AI mark is the single filled exception - a four-point star that pairs
+ * with the AI gradient, since gradient marks AI and nothing else.
+ */
 const base = {
   width: 18,
   height: 18,
   viewBox: '0 0 24 24',
   fill: 'none',
   stroke: 'currentColor',
-  strokeWidth: 1.8,
+  strokeWidth: 2,
   strokeLinecap: 'round',
   strokeLinejoin: 'round',
 }
@@ -12,9 +17,7 @@ const base = {
 export function IconArchive(props) {
   return (
     <svg {...base} {...props}>
-      <rect x="3" y="4" width="18" height="4" rx="1" />
-      <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8" />
-      <path d="M10 13h4" />
+      <path d="M8 4h8a2 2 0 0 1 2 2v13.2a1 1 0 0 1-1.5.86L12 17.4l-4.5 2.66A1 1 0 0 1 6 19.2V6a2 2 0 0 1 2-2z" />
     </svg>
   )
 }
@@ -30,8 +33,8 @@ export function IconPlus(props) {
 export function IconSearch(props) {
   return (
     <svg {...base} {...props}>
-      <circle cx="11" cy="11" r="7" />
-      <path d="m21 21-4.3-4.3" />
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M16 16l4 4" />
     </svg>
   )
 }
@@ -39,8 +42,8 @@ export function IconSearch(props) {
 export function IconTag(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M12.5 3H5a2 2 0 0 0-2 2v7.5a2 2 0 0 0 .59 1.41l9.5 9.5a2 2 0 0 0 2.82 0l7.5-7.5a2 2 0 0 0 0-2.82l-9.5-9.5A2 2 0 0 0 12.5 3Z" />
-      <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none" />
+      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h5.4a2 2 0 0 1 1.4.6l7 7a2 2 0 0 1 0 2.8l-5 5a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1-.6-1.4z" />
+      <circle cx="9" cy="9" r="1.4" fill="currentColor" stroke="none" />
     </svg>
   )
 }
@@ -48,8 +51,8 @@ export function IconTag(props) {
 export function IconLink(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M10 13a5 5 0 0 0 7.54.54l2-2a5 5 0 0 0-7.07-7.07l-1.13 1.11" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-2 2a5 5 0 0 0 7.07 7.07l1.11-1.11" />
+      <path d="M10 13.5a4 4 0 0 0 5.7.3l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2" />
+      <path d="M14 10.5a4 4 0 0 0-5.7-.3l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2" />
     </svg>
   )
 }
@@ -57,9 +60,17 @@ export function IconLink(props) {
 export function IconNote(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-      <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z" />
-      <path d="M9 13h6M9 17h6" />
+      <path d="M5 4h11l3.5 3.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+      <path d="M8 12h8M8 16h5" />
+    </svg>
+  )
+}
+
+export function IconVideo(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="2.5" y="4.5" width="19" height="15" rx="4" />
+      <path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor" stroke="none" />
     </svg>
   )
 }
@@ -67,7 +78,7 @@ export function IconNote(props) {
 export function IconArrowLeft(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M19 12H5M11 18l-6-6 6-6" />
+      <path d="M15 5l-7 7 7 7" />
     </svg>
   )
 }
@@ -75,16 +86,16 @@ export function IconArrowLeft(props) {
 export function IconCopy(props) {
   return (
     <svg {...base} {...props}>
-      <rect x="9" y="9" width="12" height="12" rx="2" />
-      <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
+      <rect x="9" y="9" width="11" height="11" rx="2.5" />
+      <path d="M15 6.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h.5" />
     </svg>
   )
 }
 
 export function IconCheck(props) {
   return (
-    <svg {...base} {...props}>
-      <path d="M20 6 9 17l-5-5" />
+    <svg {...base} strokeWidth={2.4} {...props}>
+      <path d="M4.5 12.5l5 5 10-11" />
     </svg>
   )
 }
@@ -92,8 +103,9 @@ export function IconCheck(props) {
 export function IconTrash(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
-      <path d="M10 11v6M14 11v6" />
+      <path d="M6 7h12l-1 12.2a2 2 0 0 1-2 1.8H9a2 2 0 0 1-2-1.8z" />
+      <path d="M9.5 7V5a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 5v2" />
+      <path d="M4 7h16" />
     </svg>
   )
 }
@@ -101,9 +113,8 @@ export function IconTrash(props) {
 export function IconSend(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
-      <path d="M12 3v13" />
-      <path d="m8 7 4-4 4 4" />
+      <path d="M20 4L10.5 13.8" />
+      <path d="M20 4l-6.3 17-3.2-7.2L3.5 10.4z" />
     </svg>
   )
 }
@@ -111,9 +122,8 @@ export function IconSend(props) {
 export function IconCards(props) {
   return (
     <svg {...base} {...props}>
-      <rect x="3" y="7" width="14" height="14" rx="2" />
-      <path d="M7 4h12a2 2 0 0 1 2 2v11" />
-      <path d="M7 12h6M7 16h4" />
+      <rect x="3" y="6" width="14" height="13" rx="2.5" />
+      <path d="M8 3h10a3 3 0 0 1 3 3v10" />
     </svg>
   )
 }
@@ -121,19 +131,36 @@ export function IconCards(props) {
 export function IconPalette(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M12 3a9 9 0 1 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01a1.5 1.5 0 0 1 1.11-2.49H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8Z" />
-      <circle cx="7.5" cy="12" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="9.5" cy="8" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="14.5" cy="8" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="17" cy="11.5" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="3.2" />
+      <path d="M12 4.5v1.8M12 17.7v1.8M19.5 12h-1.8M6.3 12H4.5M17.3 6.7l-1.3 1.3M8 16l-1.3 1.3M17.3 17.3L16 16M8 8L6.7 6.7" />
     </svg>
   )
 }
 
 export function IconSparkle(props) {
   return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12 2.6l2.4 7 6.9 2.1-6.9 2.1-2.4 7-2.4-7-6.9-2.1 6.9-2.1z" />
+    </svg>
+  )
+}
+
+export function IconExport(props) {
+  return (
     <svg {...base} {...props}>
-      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" />
+      <path d="M12 3v11" />
+      <path d="M8 10.5l4 4 4-4" />
+      <path d="M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2" />
+    </svg>
+  )
+}
+
+export function IconImport(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 14V3" />
+      <path d="M8 6.5l4-4 4 4" />
+      <path d="M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2" />
     </svg>
   )
 }

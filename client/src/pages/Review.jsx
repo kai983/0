@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { cards as cardStore } from '../cards'
+import { cards as cardStore, schedule } from '../cards'
 import { store } from '../store'
 
 const GRADES = [
-  { id: 'again', label: '다시', hint: '틀렸어요' },
-  { id: 'hard', label: '어려움', hint: '겨우' },
-  { id: 'good', label: '좋음', hint: '기억남' },
-  { id: 'easy', label: '쉬움', hint: '바로' },
+  { id: 'again', label: '다시' },
+  { id: 'hard', label: '어려움' },
+  { id: 'good', label: '좋음' },
+  { id: 'easy', label: '쉬움' },
 ]
+
+/** When this card would come back if graded that way - honest, per card. */
+function intervalHint(card, grade) {
+  const days = schedule(card, grade).interval
+  return days <= 0 ? '지금' : `${days}일`
+}
 
 export default function Review() {
   const [queue, setQueue] = useState([])
@@ -37,9 +43,14 @@ export default function Review() {
     const card = queue[0]
     await cardStore.grade(card.id, grade)
     setRevealed(false)
-    setDone((n) => n + 1)
-    // "다시" keeps the card in this session; anything else pushes it into the future.
-    setQueue((q) => (grade === 'again' ? [...q.slice(1), q[0]] : q.slice(1)))
+    if (grade === 'again') {
+      // The card stays in this session, carrying the state the grade just
+      // stored - hints computed from it must match what the store now holds.
+      setQueue((q) => [...q.slice(1), { ...q[0], ...schedule(q[0], 'again') }])
+    } else {
+      setDone((n) => n + 1)
+      setQueue((q) => q.slice(1))
+    }
   }
 
   if (loading) {
@@ -92,6 +103,10 @@ export default function Review() {
         <span className="list-count">{queue.length}장 남음</span>
       </div>
 
+      <div className="review-progress">
+        <i style={{ width: `${Math.round((done / (done + queue.length)) * 100)}%` }}></i>
+      </div>
+
       <div className="review-card">
         <div className="review-front">{card.front}</div>
         {revealed && (
@@ -107,7 +122,7 @@ export default function Review() {
           {GRADES.map((g) => (
             <button key={g.id} className={`grade-btn grade-${g.id}`} onClick={() => handleGrade(g.id)}>
               <span className="grade-label">{g.label}</span>
-              <span className="grade-hint">{g.hint}</span>
+              <span className="grade-hint">{intervalHint(card, g.id)}</span>
             </button>
           ))}
         </div>
