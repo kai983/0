@@ -4,7 +4,7 @@ import { store } from '../store'
 import { cards as cardStore, parseCards } from '../cards'
 import { buildCardsPrompt } from '../promptTemplate'
 import { canShare, pendingAi, sendToAi } from '../sharing'
-import { hasAiKey, makeCardsForItem, summarizeItem } from '../ai'
+import { hasAiKey, isVideoSource, makeCardsForItem, summarizeItem } from '../ai'
 import AppBar from '../components/AppBar.jsx'
 import Markdown from '../components/Markdown.jsx'
 import {
@@ -38,7 +38,21 @@ export default function ItemDetail() {
   const [aiError, setAiError] = useState('')
   const [cardsBusy, setCardsBusy] = useState(false)
   const [cardsError, setCardsError] = useState('')
+  const [elapsed, setElapsed] = useState(0)
   const location = useLocation()
+
+  const isVideo = isVideoSource(item?.source_url)
+
+  // Watching a video takes a minute or more, so the wait shows its own clock
+  // rather than an ellipsis that could mean anything.
+  useEffect(() => {
+    if (!aiBusy) {
+      setElapsed(0)
+      return
+    }
+    const tick = setInterval(() => setElapsed((s) => s + 1), 1000)
+    return () => clearInterval(tick)
+  }, [aiBusy])
 
   useEffect(() => {
     setLoading(true)
@@ -295,12 +309,42 @@ export default function ItemDetail() {
             </div>
           )}
 
-          {!prompt && !item.summary && (
+          {/* Reaching a saved summary used to leave the screen with no obvious
+              next move, so it now names one and hands over the buttons. */}
+          {item.summary && !prompt && !aiBusy && (
+            <div className="next-step">
+              <p className="next-step-title">
+                <IconCheck width={15} height={15} />
+                요약이 저장됐어요
+              </p>
+              <p className="next-step-sub">
+                {cardCount > 0
+                  ? `학습 카드 ${cardCount}장이 만들어져 있어요. 학습 탭에서 물어봅니다.`
+                  : '이제 학습 카드를 만들어 두면, 잊을 때쯤 학습 탭에서 다시 물어봐 줍니다.'}
+              </p>
+              <div className="next-step-actions">
+                {cardCount === 0 && (
+                  <button onClick={runAutoCards} disabled={cardsBusy}>
+                    <IconCards width={15} height={15} />
+                    {cardsBusy ? '만드는 중...' : '학습 카드 만들기'}
+                  </button>
+                )}
+                <button className="quiet" onClick={() => navigate(cardCount > 0 ? '/review' : '/')}>
+                  {cardCount > 0 ? '학습하러 가기' : '저장소로 돌아가기'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!prompt && !item.summary && !aiBusy && (
             <div className="ai-callout">
               <IconSparkle width={16} height={16} />
               <p>
-                프롬프트를 생성해 Claude.ai(구독 중인 요금제)에 붙여넣고, 답변을 받아 다시 여기에
-                붙여넣으면 요약-핵심-태그가 정리되어 저장됩니다. 추가 API 비용은 없습니다.
+                {hasAiKey()
+                  ? isVideo
+                    ? '영상을 AI가 직접 보고 한 줄 요약-핵심 내용-인사이트-태그로 정리합니다. 영상 길이에 따라 1-2분 걸립니다.'
+                    : '원문을 AI가 읽고 한 줄 요약-핵심 내용-인사이트-태그로 정리합니다. 추가 비용은 없습니다.'
+                  : '프롬프트를 생성해 Claude.ai(구독 중인 요금제)에 붙여넣고, 답변을 받아 다시 여기에 붙여넣으면 요약-핵심-태그가 정리되어 저장됩니다. 추가 API 비용은 없습니다.'}
               </p>
             </div>
           )}
@@ -308,15 +352,29 @@ export default function ItemDetail() {
           {aiBusy && (
             <div className="ai-callout">
               <IconSparkle width={16} height={16} />
-              <p>AI가 요약을 만드는 중이에요...</p>
+              <p>
+                {isVideo ? 'AI가 영상을 보는 중이에요' : 'AI가 요약을 만드는 중이에요'}
+                {elapsed > 0 && ` - ${elapsed}초`}
+                <br />
+                <span className="ai-callout-sub">
+                  {isVideo
+                    ? '영상은 1-2분까지 걸릴 수 있어요. 다른 화면으로 가도 저장은 계속됩니다.'
+                    : '보통 10초 안에 끝나요.'}
+                </span>
+              </p>
             </div>
           )}
           {aiError && !aiBusy && (
             <p className="hint" style={{ color: 'var(--danger)', marginBottom: 12 }}>{aiError}</p>
           )}
 
+          {/* Once a summary exists, redoing it is no longer the main move -
+              the next step is downstairs, so this steps back to a quiet one. */}
           {!prompt && !aiBusy && hasAiKey() && (
-            <button className="block" onClick={() => runAutoSummary(item)}>
+            <button
+              className={`block ${item.summary ? 'quiet' : ''}`}
+              onClick={() => runAutoSummary(item)}
+            >
               <IconSparkle width={16} height={16} />
               {item.summary ? 'AI 요약 다시 생성' : aiError ? '다시 시도' : 'AI 요약 자동 생성'}
             </button>
@@ -411,8 +469,14 @@ export default function ItemDetail() {
           {cardsError && !cardsBusy && (
             <p className="hint" style={{ color: 'var(--danger)', marginBottom: 12 }}>{cardsError}</p>
           )}
+          {/* The next-step panel above already offers this as the one blue
+              button, so down here it steps aside rather than competing. */}
           {!cardPrompt && !cardsBusy && hasAiKey() && (
-            <button className="block" style={{ marginBottom: 8 }} onClick={runAutoCards}>
+            <button
+              className={`block ${item.summary && cardCount === 0 ? 'quiet' : ''}`}
+              style={{ marginBottom: 8 }}
+              onClick={runAutoCards}
+            >
               <IconCards width={16} height={16} />
               {cardCount > 0 ? '카드 자동으로 더 만들기' : '학습 카드 자동 생성'}
             </button>

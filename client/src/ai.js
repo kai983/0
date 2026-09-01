@@ -51,16 +51,22 @@ export function hasAiKey() {
   return Boolean(aiKey.get())
 }
 
-/**
- * One generateContent call. Native goes through CapacitorHttp so the WebView's
- * origin rules stay out of the way; the browser build uses fetch.
- */
+// Reading a video means the model actually watches it, which takes far longer
+// than summarizing text. Both are capped so a request can never hang forever.
+const VIDEO_TIMEOUT = 180000
+const TEXT_TIMEOUT = 60000
+
+/** True when this source makes the model watch a video, so it will be slow. */
+export function isVideoSource(url) {
+  return Boolean(youtubeUri(url || ''))
+}
+
 /**
  * Sends one request. `asText` controls how the body reaches the native layer:
  * CapacitorHttp normally serializes a plain object itself, but when it gets
  * that wrong the API rejects the payload, so the caller can retry pre-encoded.
  */
-async function post(body, asText) {
+async function post(body, asText, timeoutMs) {
   const key = aiKey.get()
   // The key travels as a query parameter as well as a header. Either alone is
   // enough for Google, and a native HTTP layer that drops custom headers would
@@ -74,13 +80,26 @@ async function post(body, asText) {
       method: 'POST',
       headers,
       data: asText ? JSON.stringify(body) : body,
+      connectTimeout: timeoutMs,
+      readTimeout: timeoutMs,
     })
     const data = typeof res.data === 'string' ? safeParse(res.data) : res.data
     return { status: res.status, data }
   }
 
-  const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) })
-  return { status: res.status, data: await res.json().catch(() => ({})) }
+  const abort = new AbortController()
+  const timer = setTimeout(() => abort.abort(), timeoutMs)
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+      signal: abort.signal,
+    })
+    return { status: res.status, data: await res.json().catch(() => ({})) }
+  } finally {
+    clearTimeout(timer)
+  }
 }
 
 function safeParse(text) {
@@ -96,19 +115,27 @@ function isPayloadError(status, data) {
   return status === 400 && /invalid json payload|root element|cannot bind/i.test(data?.error?.message || '')
 }
 
-async function request(body) {
-  let { status, data } = await post(body, false)
+async function request(body, timeoutMs = TEXT_TIMEOUT) {
+  let result
+  try {
+    result = await post(body, false, timeoutMs)
+  } catch (err) {
+    if (err.name === 'AbortError' || /timeout|timed out/i.test(err.message || '')) {
+      throw new Error('시간이 너무 오래 걸려서 멈췄어요. 다시 시도해 주세요.')
+    }
+    throw err
+  }
 
   // A mis-serialized body and a bad key both come back as 400, so retry the
   // one case we can fix ourselves before blaming the key.
-  if (Capacitor.isNativePlatform() && isPayloadError(status, data)) {
-    ({ status, data } = await post(body, true))
+  if (Capacitor.isNativePlatform() && isPayloadError(result.status, result.data)) {
+    result = await post(body, true, timeoutMs)
   }
 
-  return { status, data }
+  return result
 }
 
-async function generate(parts, tools) {
+async function generate(parts, tools, timeoutMs) {
   const body = {
     contents: [{ parts }],
     ...(tools ? { tools } : {}),
@@ -118,7 +145,7 @@ async function generate(parts, tools) {
     return window.__aiMock(body)
   }
 
-  const { status, data } = await request(body)
+  const { status, data } = await request(body, timeoutMs)
   const message = data?.error?.message || ''
 
   if (status === 429) throw new Error('무료 한도에 걸렸어요. 1분쯤 뒤에 다시 시도해 주세요.')
@@ -160,13 +187,17 @@ function partsFor(item, promptText) {
   const video = youtubeUri(url)
   if (video) {
     // Gemini reads public YouTube videos directly from the URL.
-    return { parts: [{ file_data: { file_uri: video } }, { text: promptText }], tools: undefined }
+    return {
+      parts: [{ file_data: { file_uri: video } }, { text: promptText }],
+      tools: undefined,
+      timeout: VIDEO_TIMEOUT,
+    }
   }
   if (url) {
     // For articles, let the model fetch the page itself.
-    return { parts: [{ text: promptText }], tools: [{ url_context: {} }] }
+    return { parts: [{ text: promptText }], tools: [{ url_context: {} }], timeout: TEXT_TIMEOUT }
   }
-  return { parts: [{ text: promptText }], tools: undefined }
+  return { parts: [{ text: promptText }], tools: undefined, timeout: TEXT_TIMEOUT }
 }
 
 /** The whole reprocessing step, automatically: returns the summary markdown. */
@@ -177,8 +208,8 @@ export function summarizeItem(item) {
     sourceUrl: item.source_url,
     rawContent: item.raw_content,
   })
-  const { parts, tools } = partsFor(item, prompt)
-  return generate(parts, tools)
+  const { parts, tools, timeout } = partsFor(item, prompt)
+  return generate(parts, tools, timeout)
 }
 
 /** Q/A pairs for the learning tab, in the format parseCards() reads. */
