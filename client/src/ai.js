@@ -11,7 +11,19 @@ const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODE
 // so the app works out of the box. A key entered in settings overrides it.
 const DEFAULT_KEY = __DEFAULT_AI_KEY__
 
-const YOUTUBE = /^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch|shorts)|youtu\.be\/)/
+const YOUTUBE_ID = /^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/)|youtu\.be\/)([\w-]{11})/
+
+/**
+ * The canonical watch URL for a YouTube link, or null if it isn't one.
+ *
+ * The share sheet hands over "youtu.be/ID?si=..." and the API rejects the
+ * whole request as an invalid argument when the URI carries those extra
+ * parameters, so only the video id survives the trip.
+ */
+function youtubeUri(url) {
+  const match = url.match(YOUTUBE_ID)
+  return match ? `https://www.youtube.com/watch?v=${match[1]}` : null
+}
 
 export const aiKey = {
   get() {
@@ -145,9 +157,10 @@ export async function testAiConnection() {
 
 function partsFor(item, promptText) {
   const url = item.source_url || ''
-  if (YOUTUBE.test(url)) {
+  const video = youtubeUri(url)
+  if (video) {
     // Gemini reads public YouTube videos directly from the URL.
-    return { parts: [{ file_data: { file_uri: url } }, { text: promptText }], tools: undefined }
+    return { parts: [{ file_data: { file_uri: video } }, { text: promptText }], tools: undefined }
   }
   if (url) {
     // For articles, let the model fetch the page itself.
