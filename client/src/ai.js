@@ -69,7 +69,10 @@ async function generate(parts, tools) {
   if (status === 429) throw new Error('무료 한도에 걸렸어요. 1분쯤 뒤에 다시 시도해 주세요.')
   if (status === 503) throw new Error('지금 이용자가 몰려 있어요. 잠시 뒤에 다시 시도해 주세요.')
   if (status === 400 || status === 401 || status === 403) {
-    throw new Error('API 키가 올바르지 않아요. 설정에서 다시 확인해 주세요.')
+    // Surface Google's own reason (expired key, wrong key type, region block,
+    // ...) instead of guessing - "invalid key" is only one of several causes.
+    const reason = data?.error?.message ? ` (${data.error.message})` : ''
+    throw new Error(`API 키가 올바르지 않아요. 설정에서 다시 확인해 주세요.${reason}`)
   }
   if (status < 200 || status >= 300) {
     throw new Error(data?.error?.message || `요청이 실패했어요 (${status})`)

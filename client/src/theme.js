@@ -4,6 +4,13 @@ const STORAGE_KEY = 'knowledge-archive:theme:v1'
 
 export const THEMES = [
   {
+    id: 'toss',
+    name: '토스풍',
+    tagline: '국내 앱 문법 - 또렷한 대비',
+    dark: false,
+    swatch: { bg: '#ffffff', ink: '#191f28', accent: '#3182f6' },
+  },
+  {
     id: 'editorial',
     name: '편집형',
     tagline: '읽기 우선 - 넉넉한 여백',
@@ -24,16 +31,9 @@ export const THEMES = [
     dark: true,
     swatch: { bg: '#14130f', ink: '#f2efe6', accent: '#e8a33d' },
   },
-  {
-    id: 'toss',
-    name: '토스풍',
-    tagline: '국내 앱 문법 - 또렷한 대비',
-    dark: false,
-    swatch: { bg: '#ffffff', ink: '#191f28', accent: '#3182f6' },
-  },
 ]
 
-export const DEFAULT_THEME = 'editorial'
+export const DEFAULT_THEME = 'toss'
 
 export function getTheme() {
   try {
